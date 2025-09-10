@@ -5,8 +5,10 @@
 <div class="row g-4">
     <div class="col-lg-8">
         <div class="card p-4 mb-4">
+            <h3 class="mb-3">Order #@Model.Id</h3>
             <p class="text-muted mb-2">Placed on @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
 
+            @* --- MODIFIED STATUS DISPLAY --- *@
             <p class="text-muted mb-2">
                 Status:
                 <span class="badge @GetBadgeClass(Model.Status)">
@@ -82,16 +84,11 @@
             <div class="card p-4 mt-3">
                 @if (Model.Status == OrderStatus.DELIVERED)
                 {
-                    // --- MODIFIED SECTION ---
-                    // 1. The form is now hidden and will be submitted by JavaScript.
-                    <form asp-action="RequestReturn" method="post" class="d-none" id="returnForm-@Model.Id">
+                    <form asp-action="RequestReturn" method="post" class="d-grid gap-2">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-primary">Request Return</button>
                     </form>
-                    // 2. The button now triggers the modal via JavaScript.
-                    <button type="button" class="btn btn-outline-primary js-return-button" data-order-id="@Model.Id">
-                        <i class="bi bi-box-arrow-left"></i> Request Return
-                    </button>
                 }
                 else if (Model.Status == OrderStatus.PENDING || Model.Status == OrderStatus.SHIPPED)
                 {
@@ -122,43 +119,11 @@
     </div>
 </div>
 
-<div class="modal fade" id="returnPolicyModal" tabindex="-1" aria-labelledby="returnPolicyLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="returnPolicyLabel">Return & Replacement Policy</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="modalOrderId" value="" />
-                <p class="mb-2">This return is available <strong>only for damaged books</strong> and must be requested <strong>within 1–2 days</strong> of delivery.</p>
-                <ul class="mb-3">
-                    <li>Provide photos of the damage if requested.</li>
-                    <li>Include the invoice/packing slip in the package.</li>
-                    <li>Pickup / return instructions will be shared after approval.</li>
-                </ul>
-
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="policyAckChk">
-                    <label class="form-check-label" for="policyAckChk">
-                        I confirm I’m returning due to damage and I’m within 1–2 days of delivery.
-                    </label>
-                </div>
-                <div id="policyError" class="text-danger small mt-2 d-none">Please tick the confirmation to continue.</div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" id="confirmReturnPolicy" class="btn btn-primary">I Agree</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 @functions {
     // Helper to get badge classes for order status
     private string GetBadgeClass(BookStoreMVC.Models.OrderStatus status)
     {
+        // --- MODIFIED TO USE BOOTSTRAP 5 CLASSES ---
         return status switch
         {
             OrderStatus.PENDING => "text-bg-warning",
@@ -171,49 +136,4 @@
             _ => "text-bg-secondary"
         };
     }
-}
-
-@section Scripts {
-    <script>
-        $(function () {
-            // Handle click on the "Request Return" button.
-            $('.js-return-button').on('click', function () {
-                var button = $(this);
-                var orderId = button.data('order-id');
-                var storageKey = 'returnPolicyAccepted:' + orderId;
-
-                if (localStorage.getItem(storageKey) === 'true') {
-                    // If policy was already accepted, submit the form right away.
-                    $('#returnForm-' + orderId).submit();
-                } else {
-                    // Otherwise, show the policy modal for confirmation.
-                    $('#modalOrderId').val(orderId); // Set the order ID in the modal
-                    $('#policyError').addClass('d-none');
-                    $('#policyAckChk').prop('checked', false);
-                    $('#returnPolicyModal').modal('show');
-                }
-            });
-
-            // Handle the "I Agree" click inside the modal.
-            $('#confirmReturnPolicy').on('click', function () {
-                var orderId = $('#modalOrderId').val();
-                var storageKey = 'returnPolicyAccepted:' + orderId;
-
-                // Check if the confirmation box is ticked.
-                if (!$('#policyAckChk').is(':checked')) {
-                    $('#policyError').removeClass('d-none'); // Show error if not checked.
-                    return;
-                }
-
-                // Save acceptance in browser storage and hide the modal.
-                localStorage.setItem(storageKey, 'true');
-                $('#returnPolicyModal').modal('hide');
-
-                // Change the button to guide the user for a second confirmation click.
-                var returnButton = $('.js-return-button[data-order-id="' + orderId + '"]');
-                returnButton.removeClass('btn-outline-primary').addClass('btn-primary')
-                    .html('<i class="bi bi-check-circle"></i> Confirm Return');
-            });
-        });
-    </script>
 }

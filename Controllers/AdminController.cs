@@ -19,16 +19,22 @@ namespace BookStoreMVC.Controllers
         // GET: Admin/Dashboard
         public async Task<IActionResult> Dashboard()
         {
-            var totalUsers = await _context.Users.CountAsync();
-            var totalBooks = await _context.Books.CountAsync();
-            var totalOrders = await _context.Orders.CountAsync();
-            var totalSales = await _context.Payments.SumAsync(p => p.Amount);
+            // Fetch all orders with related data
+            var allOrders = await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Book)
+                .OrderByDescending(o => o.OrderDate) // Sort by date from newest to oldest
+                .ToListAsync();
 
-            ViewBag.TotalUsers = totalUsers;
-            ViewBag.TotalBooks = totalBooks;
-            ViewBag.TotalOrders = totalOrders;
-            ViewBag.TotalSales = totalSales;
-            return View();
+            // Pass statistical data using ViewBag
+            ViewBag.TotalUsers = await _context.Users.CountAsync();
+            ViewBag.TotalBooks = await _context.Books.CountAsync();
+            ViewBag.TotalOrders = allOrders.Count;
+            ViewBag.TotalSales = allOrders.Sum(o => o.TotalAmount); // It's better to calculate from the retrieved orders.
+
+            // Return the view with the list of all orders as the model
+            return View(allOrders);
         }
 
         // GET: Admin/Users

@@ -1,0 +1,32 @@
+@model IEnumerable<BookStoreMVC.Models.User>
+@{
+    ViewData["Title"] = "Customers";
+    // Use admin layout for this page
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2 class="mb-3">Customers</h2>
+
+<div class="table-responsive card p-2 p-md-3 product-card">
+    <table class="table align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach(var u in Model)
+        {
+            <tr>
+                <td>@u.Id</td>
+                <td>@u.Username</td>
+                <td>@u.Email</td>
+                <td>@u.Role</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

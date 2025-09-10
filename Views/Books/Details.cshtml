@@ -1,0 +1,50 @@
+@model BookStoreMVC.Models.Book
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <img class="w-100 rounded-4 shadow-sm" style="max-height:520px;object-fit:cover;" src="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? Url.Content("~/images/default-book.png") : Model.ImageUrl)" alt="@Model.Title" />
+    </div>
+    <div class="col-lg-7">
+        <div class="card product-card p-3 p-md-4">
+            <h2 class="mb-1">@Model.Title</h2>
+            <div class="d-flex align-items-center mb-2">
+                <span class="badge badge-category me-2">@Model.Category?.Name</span>
+                <div class="rating">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i><i class="bi bi-star"></i>
+                </div>
+            </div>
+            <p class="text-muted mb-3 truncate-3">@Model.Description</p>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="display-6 fw-bold">₹@Model.Price.ToString("0.00")</div>
+                @{
+                    var stock = Model.StockQuantity;
+                    string cls = stock <= 0 ? "badge-out" : stock < 5 ? "badge-low" : "badge-stock";
+                    string txt = stock <= 0 ? "Out of stock" : stock < 5 ? "Few left" : "In stock";
+                }
+                <span class="badge @cls">@txt</span>
+            </div>
+            <div class="d-grid gap-2">
+                @if (User.IsInRole("ADMIN"))
+                {
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-warning btn-rounded" asp-action="Edit" asp-route-id="@Model.Id"><i class="bi bi-pencil-fill me-1"></i>Edit</a>
+                        <a class="btn btn-danger btn-rounded" asp-action="Delete" asp-route-id="@Model.Id"><i class="bi bi-trash me-1"></i>Delete</a>
+                    </div>
+                }
+                else if (Model.StockQuantity > 0 && (User.Identity?.IsAuthenticated ?? false))
+                {
+                    <a class="btn btn-primary btn-lg btn-rounded" asp-controller="Cart" asp-action="Add" asp-route-bookId="@Model.Id" asp-route-goToCart="true">
+                        <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                    </a>
+                }
+                <a class="btn btn-outline-secondary btn-rounded" asp-controller="Books" asp-action="Index">
+                    <i class="bi bi-arrow-left me-1"></i> Back to list
+                </a>
+            </div>
+            <div class="internal-meta mt-3">BookId: @Model.Id, CategoryId: @Model.CategoryId</div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,189 @@
+@model BookStoreMVC.Controllers.PaymentVm
+@{
+    ViewData["Title"] = "Payment";
+
+    var orderId = Model.OrderId;
+    var itemsCount = (int)(ViewBag.ItemsCount ?? 0);
+    var subtotal = (decimal)(ViewBag.Subtotal ?? 0M);
+    var shipping = (decimal)(ViewBag.Shipping ?? (subtotal > 0 ? 0M : 0M));
+    var total = (decimal)(ViewBag.Amount ?? (ViewBag.Total ?? (subtotal + shipping)));
+}
+
+<style>
+    .card.no-bg {
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+    }
+</style>
+
+<div class="payment-bg">
+    <div class="container px-4">
+        <h2 class="mb-3 text-center text-white">Payment</h2>
+        <div class="checkout-steps justify-content-center mb-4">
+            <div class="step"><span class="num">1</span> Shipping</div>
+            <div class="step current"><span class="num">2</span> Payment</div>
+            <div class="step"><span class="num">3</span> Confirm</div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left: Payment Form -->
+            <div class="col-lg-7">
+                <div class="card p-4 no-bg">
+                    <form asp-action="Payment" method="post" id="paymentForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="OrderId" value="@orderId" />
+                        <input type="hidden" asp-for="Amount" value="@total" />
+                        <input type="hidden" asp-for="Success" value="true" />
+
+                        <!-- UPI Option -->
+                        <div class="payment-method-card" id="cardUPI">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="Method" id="mUPI" value="UPI" checked />
+                                <label class="form-check-label fw-semibold" for="mUPI">
+                                    <img src="~/images/upi.png" style="width: 30px; height: auto; margin-right: 10px;">UPI
+                                </label>
+                            </div>
+                            <div class="mt-2" id="upiBlock">
+                                <label asp-for="UpiId" class="form-label">UPI ID</label>
+                                <input asp-for="UpiId" class="form-control" placeholder="yourname@bank" />
+                                <div class="upi-hint mt-1">Format: <code>name@provider</code> (e.g., <em>arun@okicici</em>)</div>
+                                <div class="text-center my-3 fw-semibold text-white">OR</div>
+                                <div class="mt-3 text-center">
+                                    <img src="~/images/dummy-qr.jpg" alt="UPI QR Code" style="width: 150px; height: 150px;" />
+                                    <div class="text-muted mt-1">Scan this QR with your UPI app</div>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2 mt-4">
+                                    <a asp-controller="Cart" asp-action="Checkout" class="btn btn-outline-primary">Back</a>
+                                    <button class="btn btn-primary" type="submit">Pay ₹@total.ToString("0.00")</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Option -->
+                        <div class="payment-method-card" id="cardCARD">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="Method" id="mCARD" value="CARD" />
+                                <label class="form-check-label fw-semibold" for="mCARD">
+                                    <img src="~/images/credit card.jpg" style="width: 30px; height: auto; margin-right: 10px;">Credit/Debit Card
+                                </label>
+                            </div>
+                            <div class="mt-2" id="cardBlock" style="display: none;">
+                                <div class="mb-3">
+                                    <label asp-for="CardNumber" class="form-label">Card Number</label>
+                                    <input asp-for="CardNumber" class="form-control" placeholder="1234 5678 9012 3456" />
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label asp-for="Expiry" class="form-label">Expiry (MM/YY)</label>
+                                        <input asp-for="Expiry" class="form-control" placeholder="MM/YY" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="Cvv" class="form-label">CVV</label>
+                                        <input asp-for="Cvv" class="form-control" placeholder="123" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="CardName" class="form-label">Name on Card</label>
+                                        <input asp-for="CardName" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end gap-2 mt-4">
+                                    <a asp-controller="Cart" asp-action="Checkout" class="btn btn-outline-primary">Back</a>
+                                    <button class="btn btn-primary" type="submit">Pay ₹@total.ToString("0.00")</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COD Option -->
+                        <div class="payment-method-card" id="cardCOD">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="Method" id="mCOD" value="COD" />
+                                <label class="form-check-label fw-semibold" for="mCOD">
+                                    <img src="~/images/cod.jpg" style="width: 30px; height: auto; margin-right: 10px;">Cash on Delivery
+                                </label>
+                            </div>
+                            <div class="mt-2" id="codBlock" style="display: none;">
+                                <div class="d-flex justify-content-end gap-2 mt-4">
+                                    <a asp-controller="Cart" asp-action="codsuccess" class="btn btn-outline-primary">Back</a>
+                                    <button class="btn btn-primary" type="submit">Confirm Order</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary -->
+            <div class="col-lg-5">
+                <div class="card p-4 summary-card no-bg">
+                    <h5 class="mb-3">Order Summary</h5>
+                    <div class="line"><span>Items</span><span>@itemsCount</span></div>
+                    <div class="line"><span>Subtotal</span><span>₹@subtotal.ToString("0.00")</span></div>
+                    <div class="line"><span>Shipping</span><span>₹@shipping.ToString("0.00")</span></div>
+                    <hr />
+                    <div class="line total"><span>Total</span><span>₹@total.ToString("0.00")</span></div>
+                    <small class="text-muted d-block mt-2">Choose UPI or card to complete your purchase securely.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            function setActive(method) {
+                $('#upiBlock').hide();
+                $('#cardBlock').hide();
+                $('#codBlock').hide();
+                $('.payment-method-card').removeClass('active');
+
+                if (method === 'UPI') {
+                    $('#cardUPI').addClass('active');
+                    $('#upiBlock').show();
+                } else if (method === 'CARD') {
+                    $('#cardCARD').addClass('active');
+                    $('#cardBlock').show();
+                } else if (method === 'COD') {
+                    $('#cardCOD').addClass('active');
+                    $('#codBlock').show();
+                }
+            }
+
+            setActive($('input[name="Method"]:checked').val());
+
+            $('input[name="Method"]').on('change', function () {
+                setActive($(this).val());
+            });
+
+            $('#paymentForm').on('submit', function (e) {
+                var method = $('input[name="Method"]:checked').val();
+
+                if (method === 'CARD') {
+                    var cardNumber = $('[name="CardNumber"]').val().replace(/\s+/g, '');
+                    var expiry = $('[name="Expiry"]').val().trim();
+                    var cvv = $('[name="Cvv"]').val().trim();
+                    var cardName = $('[name="CardName"]').val().trim();
+
+                    var valid = true;
+                    if (!/^\d{13,19}$/.test(cardNumber)) valid = false;
+                    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) valid = false;
+                    if (!/^\d{3,4}$/.test(cvv)) valid = false;
+                    if (cardName.length === 0) valid = false;
+                    if (!valid) {
+                        alert('Please enter valid card details.');
+                        e.preventDefault();
+                    }
+                } else if (method === 'UPI') {
+                    var upiId = $('[name="UpiId"]').val().trim();
+                    if (upiId.length === 0) {
+                        alert('Please enter a UPI ID.');
+                        e.preventDefault();
+                    }
+                }
+                // No validation needed for COD
+            });
+        });
+    </script>
+}
+

@@ -1,0 +1,85 @@
+@model BookStoreMVC.Models.Order
+@{
+    ViewData["Title"] = "Order Confirmation";
+    bool ok = (bool)(ViewBag.Ok ?? true);
+    string method = Model.Payment?.PaymentMethod?.ToUpperInvariant() ?? "";
+}
+
+<div class="card p-4 shadow-sm">
+    <h3 class="mb-2">
+        @if (!ok)
+        {
+            <span class="text-danger">
+                <i class="bi bi-x-circle me-1"></i>Payment Failed
+            </span>
+        }
+        else if (method == "COD")
+        {
+            <span class="text-success">
+                <i class="bi bi-check-circle me-1"></i>Order Successful
+            </span>
+        }
+        else if (method == "UPI" || method == "CARD")
+        {
+            <span class="text-success">
+                <i class="bi bi-check-circle me-1"></i>Payment Successful
+            </span>
+        }
+        else
+        {
+            <span class="text-warning">
+                <i class="bi bi-exclamation-circle me-1"></i>Status Unknown
+            </span>
+        }
+    </h3>
+
+    <p class="text-muted mb-3">
+        Order #@Model.Id • @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")
+    </p>
+    <p class="text-muted">
+        Payment Method: @method
+    </p>
+    <p class="text-muted fw-semibold">
+        Payment Status:
+        @if (!ok)
+        {
+            <span class="text-danger">Failed</span>
+        }
+        else if (method == "COD")
+        {
+            <span class="text-warning">Pending</span>
+        }
+        else if (method == "UPI" || method == "CARD")
+        {
+            <span class="text-success">Completed</span>
+        }
+        else
+        {
+            <span class="text-muted">Unknown</span>
+        }
+    </p>
+
+    <div class="row g-3">
+        @foreach (var i in Model.OrderItems)
+        {
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-between border rounded p-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="@(string.IsNullOrWhiteSpace(i.Book?.ImageUrl) ? Url.Content("~/images/default-book.png") : i.Book.ImageUrl)"
+                             style="width:60px;height:80px;object-fit:cover;" class="rounded" />
+                        <div>
+                            <div class="fw-semibold">@i.Book?.Title</div>
+                            <small class="text-muted">x @i.Quantity</small>
+                        </div>
+                    </div>
+                    <div class="fw-bold">₹@((i.UnitPrice * i.Quantity).ToString("0.00"))</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="h5 m-0">Total: ₹@Model.TotalAmount.ToString("0.00")</div>
+        <a class="btn btn-primary" asp-controller="Books" asp-action="Index">Explore more books</a>
+    </div>
+</div>

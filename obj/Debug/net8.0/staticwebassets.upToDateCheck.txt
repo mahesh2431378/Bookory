@@ -1,0 +1,15 @@
+wwwroot\css\admindashboard.css
+wwwroot\css\site.css
+wwwroot\images\brief_history_of_time.jpg
+wwwroot\images\checkout-bg.png
+wwwroot\images\clean_code.jpg
+wwwroot\images\cod.jpg
+wwwroot\images\credit card.jpg
+wwwroot\images\default-book.png
+wwwroot\images\dummy-qr.jpg
+wwwroot\images\favicon.png
+wwwroot\images\great_gatsby.jpg
+wwwroot\images\login-bg.jpg
+wwwroot\images\logo-bookory.svg
+wwwroot\images\payment method.jpg
+wwwroot\images\upi.png

@@ -5,8 +5,10 @@
 <div class="row g-4">
     <div class="col-lg-8">
         <div class="card p-4 mb-4">
+            <h3 class="mb-3">Order #@Model.Id</h3>
             <p class="text-muted mb-2">Placed on @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
 
+            @* --- MODIFIED STATUS DISPLAY --- *@
             <p class="text-muted mb-2">
                 Status:
                 <span class="badge @GetBadgeClass(Model.Status)">
@@ -82,12 +84,19 @@
             <div class="card p-4 mt-3">
                 @if (Model.Status == OrderStatus.DELIVERED)
                 {
+<<<<<<< HEAD
                     // --- MODIFIED FORM & BUTTON ---
                     // The form now has a unique ID, and the button is of type "button" to trigger the script.
                     <form asp-action="RequestReturn" method="post" class="d-grid gap-2" id="returnForm-@Model.Id">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@Model.Id" />
                         <button type="button" class="btn btn-outline-primary js-return-button" data-order-id="@Model.Id">Request Return</button>
+=======
+                    <form asp-action="RequestReturn" method="post" class="d-grid gap-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-primary">Request Return</button>
+>>>>>>> 524d2c63950fb1ab01a9dbf1c76c8d9a00de85b2
                     </form>
                 }
                 else if (Model.Status == OrderStatus.PENDING || Model.Status == OrderStatus.SHIPPED)
@@ -119,6 +128,7 @@
     </div>
 </div>
 
+<<<<<<< HEAD
 @* --- ADDED MODAL HTML (DEFINED ONCE OUTSIDE THE LOOP) --- *@
 <div class="modal fade" id="returnPolicyModal" tabindex="-1" aria-labelledby="returnPolicyLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -152,10 +162,13 @@
     </div>
 </div>
 
+=======
+>>>>>>> 524d2c63950fb1ab01a9dbf1c76c8d9a00de85b2
 @functions {
     // Helper to get badge classes for order status
     private string GetBadgeClass(BookStoreMVC.Models.OrderStatus status)
     {
+        // --- MODIFIED TO USE BOOTSTRAP 5 CLASSES ---
         return status switch
         {
             OrderStatus.PENDING => "text-bg-warning",
@@ -168,6 +181,7 @@
             _ => "text-bg-secondary"
         };
     }
+<<<<<<< HEAD
 }
 
 @* --- ADDED SCRIPT SECTION FOR MODAL LOGIC --- *@
@@ -204,4 +218,6 @@
             });
         });
     </script>
+=======
+>>>>>>> 524d2c63950fb1ab01a9dbf1c76c8d9a00de85b2
 }

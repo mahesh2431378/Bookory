@@ -9,6 +9,7 @@ namespace BookStoreMVC.Services
     public class CartService : ICartService
     {
         private readonly ApplicationDbContext _context;
+
         public CartService(ApplicationDbContext context)
         {
             _context = context;
@@ -28,7 +29,9 @@ namespace BookStoreMVC.Services
         {
             var book = await _context.Books.FindAsync(bookId);
             if (book == null || book.StockQuantity <= 0) return;
+
             var existing = await _context.CartItems.FirstOrDefaultAsync(c => c.UserId == userId && c.BookId == bookId);
+
             if (existing == null)
             {
                 existing = new CartItem { UserId = userId, BookId = bookId, Quantity = 1 };
@@ -36,7 +39,11 @@ namespace BookStoreMVC.Services
             }
             else
             {
-                existing.Quantity += 1;
+                // Ensure we don't add more than what's in stock
+                if (existing.Quantity < book.StockQuantity)
+                {
+                    existing.Quantity += 1;
+                }
             }
             await _context.SaveChangesAsync();
         }
@@ -45,9 +52,11 @@ namespace BookStoreMVC.Services
         {
             var item = await _context.CartItems.Include(c => c.Book)
                 .FirstOrDefaultAsync(c => c.Id == cartItemId && c.UserId == userId);
+
             if (item != null)
             {
                 int maxQty = item.Book != null ? item.Book.StockQuantity : qty;
+                // Clamp the quantity between 1 and the maximum available stock
                 item.Quantity = Math.Max(1, Math.Min(qty, maxQty));
                 await _context.SaveChangesAsync();
             }
@@ -56,6 +65,7 @@ namespace BookStoreMVC.Services
         public async Task RemoveAsync(int userId, int cartItemId)
         {
             var item = await _context.CartItems.FirstOrDefaultAsync(c => c.Id == cartItemId && c.UserId == userId);
+
             if (item != null)
             {
                 _context.CartItems.Remove(item);

@@ -19,6 +19,8 @@ namespace BookStoreMVC.Models
 
     public class Order
     {
+        internal PaymentStatus PaymentStatus;
+
         [Key]
         public int Id { get; set; }
 

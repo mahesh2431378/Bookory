@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 namespace BookStoreMVC.Services
 {
     /// <summary>
-    /// Implements payment processing using Entity Framework. The payment status and order status are updated based on success flag.
+    /// Implements payment processing using Entity Framework. 
+    /// The payment and order statuses are updated based on the payment method and success flag.
     /// </summary>
     public class PaymentService : IPaymentService
     {
         private readonly ApplicationDbContext _context;
+
         public PaymentService(ApplicationDbContext context)
         {
             _context = context;
@@ -16,41 +18,68 @@ namespace BookStoreMVC.Services
 
         public async Task<Payment> ProcessPaymentAsync(int userId, int orderId, decimal amount, string method, bool success)
         {
-            // Validate order belongs to user
+            // 1. Validate that the order exists and belongs to the user.
             var order = await _context.Orders.FindAsync(orderId);
             if (order == null || order.UserId != userId)
             {
                 throw new InvalidOperationException("Invalid order.");
             }
 
-            // Determine payment status based on method and success
-            PaymentStatus status;
+            PaymentStatus paymentStatus;
+
+            // 2. Determine payment and order status based on the method and success flag.
             if (method == "COD")
             {
-                status = success ? PaymentStatus.PENDING : PaymentStatus.FAILED;
+                // For Cash on Delivery, if the order is already delivered, this action marks it as paid.
+                // Otherwise, a new COD order's payment is pending until delivery.
+                paymentStatus = (order.Status == OrderStatus.DELIVERED)
+                                ? PaymentStatus.COMPLETED
+                                : PaymentStatus.PENDING;
+
+                // A new COD order is moved to PENDING for processing.
+                if (order.Status != OrderStatus.DELIVERED)
+                {
+                    order.Status = OrderStatus.PENDING;
+                }
             }
-            else
+            else // For all other online payment methods.
             {
-                status = success ? PaymentStatus.COMPLETED : PaymentStatus.FAILED;
+                if (success)
+                {
+                    paymentStatus = PaymentStatus.COMPLETED;
+                    // Protect final states: only update the order status if it's not already completed/delivered.
+                    if (order.Status != OrderStatus.DELIVERED)
+                    {
+                        order.Status = OrderStatus.PENDING;
+                    }
+                }
+                else
+                {
+                    paymentStatus = PaymentStatus.FAILED;
+                    if (order.Status != OrderStatus.DELIVERED)
+                    {
+                        order.Status = OrderStatus.CANCELLED;
+                    }
+                }
             }
 
+            // 3. Create the payment record.
             var payment = new Payment
             {
                 OrderId = orderId,
                 Amount = amount,
                 PaymentMethod = method,
-                PaymentStatus = status,
+                PaymentStatus = paymentStatus,
                 PaymentDate = DateTime.UtcNow
             };
 
+            // Explicitly link the navigation property for a consistent object graph.
+            order.Payment = payment;
+
             _context.Payments.Add(payment);
-
-            // Update order status
-            order.Status = success ? OrderStatus.PENDING : OrderStatus.CANCELLED;
-
             await _context.SaveChangesAsync();
+
             return payment;
         }
-
     }
 }

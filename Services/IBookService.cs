@@ -2,7 +2,7 @@ using BookStoreMVC.Models;
 
 namespace BookStoreMVC.Services
 {
-    /// <summary>
+    
     /// Defines operations for retrieving and managing books and categories.
     /// Introducing this interface allows controllers to depend on an abstraction
     /// rather than the underlying Entity Framework data context.

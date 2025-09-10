@@ -134,3 +134,4 @@ C:\Users\2431378\OneDrive - Cognizant\Desktop\BOOKORY\obj\Debug\net8.0\BookStore
 C:\Users\2431378\OneDrive - Cognizant\Desktop\BOOKORY\obj\Debug\net8.0\BookStoreMVC.genruntimeconfig.cache
 C:\Users\2431378\OneDrive - Cognizant\Desktop\BOOKORY\obj\Debug\net8.0\ref\BookStoreMVC.dll
 C:\Users\2431378\OneDrive - Cognizant\Desktop\BOOKORY\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\2431378\OneDrive - Cognizant\Desktop\BOOKORY\obj\Debug\net8.0\BookStoreMVC.sourcelink.json

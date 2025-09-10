@@ -1,37 +1,22 @@
-@*
-    This view displays a list of orders. It has two different layouts:
-    1. An admin view that shows all orders in a detailed table.
-    2. A customer view that shows their own orders in a user-friendly card format.
-*@
 @model IEnumerable<BookStoreMVC.Models.Order>
 @{
     ViewData["Title"] = User.IsInRole("ADMIN") ? "Manage Orders" : "My Orders";
     bool isAdmin = User.IsInRole("ADMIN");
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-    <h2 class="mb-0">@ViewData["Title"]</h2>
-</div>
+<h2 class="mb-3">@ViewData["Title"]</h2>
 
 @if (!Model.Any())
 {
-    // A more engaging message shown when the user has no orders.
-    <div class="alert alert-primary d-flex align-items-center" role="alert">
-        <i class="bi bi-info-circle-fill me-2"></i>
-        <div>
-            You have no orders yet. <a asp-controller="Home" asp-action="Index" class="alert-link">Start shopping now!</a>
-        </div>
-    </div>
+    <div class="alert alert-info">No orders yet.</div>
 }
 else
 {
-    // Show the appropriate view based on the user's role (Admin or Customer).
     @if (isAdmin)
     {
-        Layout = "~/Views/Shared/_AdminLayout.cshtml";
-        // For admins, display a detailed table of all user orders.
-        <div class="table-responsive card p-2 p-md-3">
-            <table class="table align-middle mb-0 table-hover">
+        // Admin table view remains unchanged
+        <div class="table-responsive card p-2 p-md-3 product-card">
+            <table class="table align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>Order</th>
@@ -40,7 +25,7 @@ else
                         <th class="text-end">Total</th>
                         <th class="text-center">Status</th>
                         <th class="text-end">Placed</th>
-                        <th class="text-end">Actions</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,24 +36,10 @@ else
                             <td>@o.User?.Username</td>
                             <td class="text-center">@o.OrderItems.Count</td>
                             <td class="text-end">₹@o.TotalAmount.ToString("0.00")</td>
-                            @* UI ENHANCEMENT: Added status badges for better visual feedback in the admin panel. *@
-                            <td class="text-center">
-                                <span class="badge @(o.Status == OrderStatus.PENDING ? "text-bg-warning" :
-                                                 o.Status == OrderStatus.SHIPPED ? "text-bg-info" :
-                                                 o.Status == OrderStatus.DELIVERED ? "text-bg-success" :
-                                                 o.Status == OrderStatus.CANCELLED ? "text-bg-danger" :
-                                                 o.Status == OrderStatus.RETURN_REQUESTED ? "text-bg-warning" :
-                                                 o.Status == OrderStatus.RETURN_SHIPPED ? "text-bg-info" :
-                                                 o.Status == OrderStatus.RETURN_DELIVERED ? "text-bg-success" :
-                                                 "text-bg-secondary")">
-                                    @o.Status.ToString().Replace("_", " ")
-                                </span>
-                            </td>
+                            <td class="text-center">@o.Status</td>
                             <td class="text-end">@o.OrderDate.ToString("yyyy-MM-dd")</td>
                             <td class="text-end">
-                                <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@o.Id">
-                                    <i class="bi bi-eye"></i> View
-                                </a>
+                                <a class="btn btn-outline-primary btn-sm btn-rounded" asp-action="Details" asp-route-id="@o.Id">View</a>
                             </td>
                         </tr>
                     }
@@ -78,7 +49,7 @@ else
     }
     else
     {
-        // For customers, display their orders as individual cards.
+        // Customer card view
         <div class="vstack gap-3">
             @foreach (var o in Model.OrderByDescending(o => o.OrderDate))
             {
@@ -89,18 +60,18 @@ else
                             <small class="text-muted">@o.OrderDate.ToString("yyyy-MM-dd HH:mm")</small>
                         </div>
                         <span class="badge @(o.Status == OrderStatus.PENDING ? "text-bg-warning" :
-                                         o.Status == OrderStatus.SHIPPED ? "text-bg-info" :
-                                         o.Status == OrderStatus.DELIVERED ? "text-bg-success" :
-                                         o.Status == OrderStatus.CANCELLED ? "text-bg-danger" :
-                                         o.Status == OrderStatus.RETURN_REQUESTED ? "text-bg-warning" :
-                                         o.Status == OrderStatus.RETURN_SHIPPED ? "text-bg-info" :
-                                         o.Status == OrderStatus.RETURN_DELIVERED ? "text-bg-success" :
-                                         "text-bg-secondary")">
-                            @o.Status.ToString().Replace("_", " ")
-                        </span>
-                    </div>
-                    <div class="row g-2 mt-2">
-                        @foreach (var it in o.OrderItems)
+                                                                                                     o.Status == OrderStatus.SHIPPED ? "text-bg-info" :
+                                                                                                     o.Status == OrderStatus.DELIVERED ? "text-bg-success" :
+                                                                                                     o.Status == OrderStatus.CANCELLED ? "text-bg-danger" :
+                                                                                                     o.Status == OrderStatus.RETURN_REQUESTED ? "text-bg-warning" :
+                                                                                                     o.Status == OrderStatus.RETURN_SHIPPED ? "text-bg-info" :
+                                                                                                     o.Status == OrderStatus.RETURN_DELIVERED ? "text-bg-success" :
+                                                                                                     "text-bg-secondary")">
+                @o.Status.ToString().Replace("_", " ")
+            </span>
+        </div>
+        <div class="row g-2 mt-2">
+            @foreach (var it in o.OrderItems)
                         {
                             <div class="col-12 col-md-6 col-lg-4">
                                 <div class="d-flex align-items-center gap-2 border rounded p-2">
@@ -115,32 +86,30 @@ else
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
                         <div class="fw-bold">Total: ₹@o.TotalAmount.ToString("0.00")</div>
-                        <div class="d-flex gap-2 align-items-center">
-                            @* Conditionally render action buttons based on the order status. *@
+                        <div class="d-flex gap-2">
                             @if (o.Status == OrderStatus.DELIVERED)
                             {
-                                // This is a hidden form that will be submitted by JavaScript after the user confirms the return policy.
+                                @* --- REPLACED SIMPLE FORM WITH NEW MODAL LOGIC --- *@
                                 <form asp-action="RequestReturn" method="post" class="d-inline d-none" id="returnForm-@o.Id">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@o.Id" />
                                 </form>
                                 <button type="button" class="btn btn-sm btn-outline-primary js-return-button" data-order-id="@o.Id">
-                                    <i class="bi bi-box-arrow-left"></i> Return the Order
+                                    Return the Order
                                 </button>
+                                <div class="small text-success mt-1 d-none" id="returnHint-@o.Id">
+                                    Policy accepted. Click Return again.
+                                </div>
                             }
                             else if (o.Status == OrderStatus.PENDING || o.Status == OrderStatus.SHIPPED)
                             {
                                 <form asp-action="Cancel" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@o.Id" />
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="bi bi-x-circle"></i> Cancel The Order
-                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancel The Order</button>
                                 </form>
                             }
-                            <a class="btn btn-outline-secondary btn-sm" asp-action="Details" asp-route-id="@o.Id">
-                                <i class="bi bi-receipt"></i> Details
-                            </a>
+                            <a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@o.Id">Details</a>
                         </div>
                     </div>
                 </div>
@@ -149,9 +118,7 @@ else
     }
 }
 
-@* This modal is defined ONCE for the entire page for efficiency. 
-    JavaScript will handle passing the correct order ID to it when a return button is clicked.
-*@
+@* --- ADDED MODAL HTML (DEFINED ONCE OUTSIDE THE LOOP) --- *@
 <div class="modal fade" id="returnPolicyModal" tabindex="-1" aria-labelledby="returnPolicyLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -185,52 +152,42 @@ else
 </div>
 
 
-@* This script section contains the jQuery logic for the two-click return confirmation process.
-    It uses localStorage to remember if a user has accepted the policy for a specific order to avoid showing the pop-up every time.
-*@
+@* --- ADDED SCRIPT SECTION FOR MODAL LOGIC --- *@
 @section Scripts {
-<script>
-    $(function () {
-        // Handle click on any "Return the Order" button on the page.
-        $('.js-return-button').on('click', function () {
-            var button = $(this);
-            var orderId = button.data('order-id');
-            var storageKey = 'returnPolicyAccepted:' + orderId;
+    <script>
+        $(function () {
+            // Handle click on any "Return the Order" button
+            $('.js-return-button').on('click', function () {
+                var orderId = $(this).data('order-id');
+                var storageKey = 'returnPolicyAccepted:' + orderId;
 
-            // Check if the user has already accepted the policy for this specific order.
-            if (localStorage.getItem(storageKey) === 'true') {
-                // If yes, submit the hidden form immediately.
-                $('#returnForm-' + orderId).submit();
-            } else {
-                // If no, show the return policy modal for them to read and accept.
-                $('#modalOrderId').val(orderId); // Pass the current order ID to the modal.
-                $('#policyError').addClass('d-none');
-                $('#policyAckChk').prop('checked', false);
-                $('#returnPolicyModal').modal('show');
-            }
+                // Check if policy was already accepted for this order
+                if (localStorage.getItem(storageKey) === 'true') {
+                    $('#returnForm-' + orderId).submit();
+                } else {
+                    // If not accepted, show the policy modal
+                    $('#modalOrderId').val(orderId); // Store the current order ID in the modal
+                    $('#policyError').addClass('d-none');
+                    $('#policyAckChk').prop('checked', false);
+                    $('#returnPolicyModal').modal('show');
+                }
+            });
+
+            // Handle click on "I Agree" button inside the modal
+            $('#confirmReturnPolicy').on('click', function () {
+                var orderId = $('#modalOrderId').val();
+                var storageKey = 'returnPolicyAccepted:' + orderId;
+
+                if (!$('#policyAckChk').is(':checked')) {
+                    $('#policyError').removeClass('d-none');
+                    return;
+                }
+
+                // If checkbox is ticked, save acceptance and close modal
+                localStorage.setItem(storageKey, 'true');
+                $('#returnPolicyModal').modal('hide');
+                $('#returnHint-' + orderId).removeClass('d-none'); // Show hint text
+            });
         });
-
-        // Handle the "I Agree" click inside the modal.
-        $('#confirmReturnPolicy').on('click', function () {
-            var orderId = $('#modalOrderId').val();
-            var storageKey = 'returnPolicyAccepted:' + orderId;
-
-            // First, validate that the user has ticked the confirmation checkbox.
-            if (!$('#policyAckChk').is(':checked')) {
-                $('#policyError').removeClass('d-none'); // Show an error if not checked.
-                return;
-            }
-
-            // If checked, save the acceptance state in the browser's localStorage.
-            localStorage.setItem(storageKey, 'true');
-            $('#returnPolicyModal').modal('hide');
-
-            // --- UI/UX ENHANCEMENT ---
-            // Transform the button to guide the user for the second click.
-            var returnButton = $('.js-return-button[data-order-id="' + orderId + '"]');
-            returnButton.removeClass('btn-outline-primary').addClass('btn-primary')
-                .html('<i class="bi bi-check-circle"></i> Confirm Return');
-        });
-    });
-</script>
+    </script>
 }

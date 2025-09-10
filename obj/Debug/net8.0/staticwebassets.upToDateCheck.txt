@@ -1,5 +1,7 @@
 wwwroot\css\admindashboard.css
 wwwroot\css\site.css
+wwwroot\images\books\2bb79c1a-0027-4a9c-a1d0-a855a5da9281_bookshelf.png
+wwwroot\images\books\fcf8302f-6d80-4eb5-b889-70787b02f3b2_jpeg.jpg
 wwwroot\images\brief_history_of_time.jpg
 wwwroot\images\checkout-bg.png
 wwwroot\images\clean_code.jpg
@@ -10,6 +12,7 @@ wwwroot\images\dummy-qr.jpg
 wwwroot\images\favicon.png
 wwwroot\images\great_gatsby.jpg
 wwwroot\images\login-bg.jpg
+wwwroot\images\login-bg.png
 wwwroot\images\logo-bookory.svg
 wwwroot\images\payment method.jpg
 wwwroot\images\upi.png

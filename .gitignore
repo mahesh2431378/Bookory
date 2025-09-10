@@ -32,4 +32,6 @@ appsettings.json
 
 appsettings.Development.json
 
- 
+ # Ignore build output folders
+[Bb]in/
+[Oo]bj/

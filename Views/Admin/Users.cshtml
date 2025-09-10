@@ -18,15 +18,15 @@
             </tr>
         </thead>
         <tbody>
-        @foreach(var u in Model)
-        {
-            <tr>
-                <td>@u.Id</td>
-                <td>@u.Username</td>
-                <td>@u.Email</td>
-                <td>@u.Role</td>
-            </tr>
-        }
+            @foreach (var u in Model)
+            {
+                <tr>
+                    <td>@u.Id</td>
+                    <td>@u.Username</td>
+                    <td>@u.Email</td>
+                    <td>@u.Role</td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>

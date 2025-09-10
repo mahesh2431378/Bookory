@@ -1,0 +1,153 @@
+@model BookStoreMVC.Models.PaginatedList<BookStoreMVC.Models.Book>
+@{
+    ViewData["Title"] = "Books";
+    var categories = ViewBag.Categories as List<BookStoreMVC.Models.Category>;
+    // Get the category ID to ensure it persists when changing pages
+    string selectedCategoryId = ViewData["CategoryId"]?.ToString() ?? Context.Request.Query["categoryId"].ToString();
+
+    // Variables for enabling/disabling the Previous/Next buttons
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<div class="hero mb-4">
+    <h1 class="mb-1">Books</h1>
+    <p class="lead mb-0">Browse our collection across categories and find your next great read.</p>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-12 col-md-3">
+        <!-- The category/filter sidebar remains functionally the same -->
+        <div class="card p-3 product-card">
+            <h6 class="mb-3">Categories</h6>
+            <div class="d-grid gap-2">
+                <a class="btn btn-light btn-rounded @(string.IsNullOrEmpty(selectedCategoryId) ? "active" : "")" asp-action="Index" asp-route-pageNumber="">All</a>
+                @if (categories != null)
+                {
+                    foreach (var c in categories)
+                    {
+                        bool isActive = selectedCategoryId == c.Id.ToString();
+                        <a class="btn @(isActive ? "btn-secondary" : "btn-outline-secondary") btn-rounded text-start" asp-action="Index" asp-route-categoryId="@c.Id" asp-route-pageNumber="">@c.Name</a>
+                    }
+                }
+            </div>
+            <hr />
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-2">Max Price</h6>
+                    <span id="priceValueLabel" class="fw-bold text-primary">₹5000</span>
+                </div>
+                <input type="range" class="form-range" id="priceRangeFilter" min="0" max="5000" step="100" value="5000">
+                <div class="d-flex justify-content-between small text-muted">
+                    <span>₹0</span>
+                    <span>₹5000</span>
+                </div>
+            </div>
+            @if (User.IsInRole("ADMIN"))
+            {
+                <a asp-controller="Books" asp-action="Create" class="btn btn-success btn-rounded mt-3">Add New Book</a>
+            }
+        </div>
+    </div>
+
+    <div class="col-12 col-md-9">
+        <div class="mb-4">
+            <input type="search" id="bookSearchInput" class="form-control form-control-lg" placeholder="Filter books by title on this page...">
+        </div>
+
+        <div class="row g-3">
+            <!-- The book card loop now iterates over the books in the paginated list -->
+            @foreach (var book in Model)
+            {
+                <div class="col-6 col-lg-4 col-xxl-3 book-item-container" data-price="@book.Price">
+                    <div class="card product-card h-100">
+                        <img class="product-img" src="@(string.IsNullOrWhiteSpace(book.ImageUrl) ? Url.Content("~/images/default-book.png") : book.ImageUrl)" alt="@book.Title" />
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h3 class="product-title mb-0 text-truncate" title="@book.Title">@book.Title</h3>
+                                <span class="badge badge-category">@book.Category?.Name</span>
+                            </div>
+                            <div class="text-muted truncate-2 mb-2">@book.Description</div>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="product-price">₹@book.Price.ToString("0.00")</div>
+                                @{
+                                    var stock = book.StockQuantity;
+                                    string stockCls = stock <= 0 ? "badge-out" : stock < 5 ? "badge-low" : "badge-stock";
+                                    string stockTxt = stock <= 0 ? "Out of stock" : stock < 5 ? "Few left" : "In stock";
+                                }
+                                <span class="badge @stockCls">@stockTxt</span>
+                            </div>
+                            <div class="mt-auto d-grid gap-2">
+                                <a class="btn btn-primary btn-rounded" asp-controller="Books" asp-action="Details" asp-route-id="@book.Id"><i class="bi bi-book me-1"></i> Details</a>
+                                @if (User.IsInRole("ADMIN"))
+                                {
+                                    <div class="d-flex gap-2">
+                                        <a class="btn btn-warning btn-rounded" asp-action="Edit" asp-route-id="@book.Id"><i class="bi bi-pencil-fill me-1"></i>Edit</a>
+                                        <a class="btn btn-danger btn-rounded" asp-action="Delete" asp-route-id="@book.Id"><i class="bi bi-trash me-1"></i>Delete</a>
+                                    </div>
+                                }
+                                else if (User.Identity != null && User.Identity.IsAuthenticated && book.StockQuantity > 0)
+                                {
+                                    <a class="btn btn-outline-primary btn-rounded" asp-controller="Cart" asp-action="Add" asp-route-bookId="@book.Id" asp-route-goToCart="true"><i class="bi bi-cart-plus me-1"></i> Add to Cart</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- ==================================================== -->
+        <!-- UPDATED PAGINATION CONTROLS (Previous/Next Buttons)  -->
+        <!-- ==================================================== -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <!-- Previous Button -->
+                <a class="btn btn-primary @prevDisabled"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   asp-route-categoryId="@selectedCategoryId">
+                    <i class="bi bi-arrow-left me-1"></i> Previous
+                </a>
+
+                <!-- Page Indicator -->
+                <span class="text-muted">
+                    Page @Model.PageIndex of @Model.TotalPages
+                </span>
+
+                <!-- Next Button -->
+                <a class="btn btn-primary @nextDisabled"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   asp-route-categoryId="@selectedCategoryId">
+                    Next <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <!-- The client-side filter script now only filters books on the CURRENT page -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            function filterBooks() {
+                var searchTerm = $("#bookSearchInput").val().toLowerCase();
+                var maxPrice = parseInt($("#priceRangeFilter").val());
+                $("#priceValueLabel").text("₹" + maxPrice);
+                $(".book-item-container").filter(function() {
+                    var bookTitle = $(this).find(".product-title").text().toLowerCase();
+                    var bookPrice = parseInt($(this).data("price"));
+                    var titleMatch = bookTitle.indexOf(searchTerm) > -1;
+                    var priceMatch = bookPrice <= maxPrice;
+                    $(this).toggle(titleMatch && priceMatch);
+                });
+            }
+            $("#bookSearchInput").on("keyup", filterBooks);
+            $("#priceRangeFilter").on("input", filterBooks);
+            filterBooks();
+        });
+    </script>
+}

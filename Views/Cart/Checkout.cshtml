@@ -1,0 +1,91 @@
+@model BookStoreMVC.Controllers.CheckoutVm
+@{
+    ViewData["Title"] = "Checkout";
+    var itemsCount = (int)(ViewBag.ItemsCount ?? 0);
+    var subtotal   = (decimal)(ViewBag.Subtotal ?? 0M);
+    var shipping   = (decimal)(ViewBag.Shipping ?? (subtotal > 0 ? 49M : 0M));
+    var total      = subtotal + shipping;
+}
+
+<!-- Checkout page: shipping details with summary and decorative background -->
+<div class="checkout-bg">
+  <!-- Wrap the checkout content in a fixed-width container for a typical e‑commerce layout -->
+  <div class="container px-4">
+    <h2 class="mb-3 text-center text-white">Checkout</h2>
+    <div class="checkout-steps justify-content-center mb-4">
+      <div class="step current"><span class="num">1</span> Shipping</div>
+      <div class="step"><span class="num">2</span> Payment</div>
+      <div class="step"><span class="num">3</span> Confirm</div>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-lg-7">
+        <div class="card p-4">
+          <form asp-action="Checkout" method="post" id="checkoutForm">
+          @Html.AntiForgeryToken()
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Full Name</label>
+              <input asp-for="FullName" class="form-control" required />
+            </div>
+            <div class="col-12">
+              <label class="form-label">Address</label>
+              <input asp-for="Address" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">City</label>
+              <input asp-for="City" class="form-control" required />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">State</label>
+              <input asp-for="State" class="form-control" required />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">PIN Code</label>
+              <input asp-for="Zip" class="form-control" required pattern="^[1-9][0-9]{5}$" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone</label>
+              <input asp-for="Phone" class="form-control" required pattern="^[0-9]{10}$" />
+            </div>
+          </div>
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-primary">Back to Cart</a>
+            <button class="btn btn-primary" type="submit">Proceed to Payment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card p-4 summary-card">
+        <h5 class="mb-3">Order Summary</h5>
+        <div class="line"><span>Items</span><span>@itemsCount</span></div>
+        <div class="line"><span>Subtotal</span><span>₹@subtotal.ToString("0.00")</span></div>
+        <div class="line"><span>Shipping</span><span>₹@shipping.ToString("0.00")</span></div>
+        <hr />
+        <div class="line total"><span>Total</span><span>₹@total.ToString("0.00")</span></div>
+        <small class="text-muted d-block mt-2">Secure checkout • No hidden charges</small>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+<script>
+  // jQuery client side validation for required fields
+  $(function () {
+    $('#checkoutForm').on('submit', function () {
+      var ok = true;
+      $(this).find('input[required]').each(function () {
+        if (!$(this).val().trim()) {
+          $(this).addClass('is-invalid');
+          ok = false;
+        } else {
+          $(this).removeClass('is-invalid');
+        }
+      });
+      return ok;
+    });
+  });
+</script>
+}

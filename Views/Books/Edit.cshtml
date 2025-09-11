@@ -1,5 +1,6 @@
 @model BookStoreMVC.Models.Book
 @{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "Edit Book";
     var categories = ViewBag.Categories as List<BookStoreMVC.Models.Category>;
 }
@@ -13,7 +14,7 @@
     </div>
     <div class="mb-3">
         <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+<textarea asp-for="Description" class="form-control" rows="4"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
     <div class="mb-3">
@@ -40,5 +41,7 @@
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </form>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

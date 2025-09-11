@@ -1,208 +1,249 @@
 @model BookStoreMVC.Models.Order
+
 @{
-    ViewData["Title"] = "Order Details";
+	ViewData["Title"] = "Order Details";
 }
+
 <div class="row g-4">
-    <div class="col-lg-8">
-        <div class="card p-4 mb-4">
-            <h3 class="mb-3">Order #@Model.Id</h3>
-            <p class="text-muted mb-2">Placed on @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+	<div class="col-lg-8">
+		<div class="card p-4 mb-4">
+			<h3 class="mb-3">Order #@Model.Id</h3>
+			<p class="text-muted mb-2">Placed on @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
 
-            <p class="text-muted mb-2">
-                Status:
-                <span class="badge @GetBadgeClass(Model.Status)">
-                    @Model.Status.ToString().Replace("_", " ")
-                </span>
-            </p>
+			<p class="text-muted mb-2">
+				Status:
+				<span class="badge @GetBadgeClass(Model.Status)">
+					@ToSentenceCase(Model.Status.ToString())
+				</span>
+			</p>
 
-            <p class="text-muted mb-2">Total Amount: <strong>₹@Model.TotalAmount.ToString("0.00")</strong></p>
-            <p class="text-muted mb-2">Shipping To: <strong>@Model.ShippingName</strong></p>
-            <p class="text-muted mb-2">Address: @Model.ShippingAddress, @Model.ShippingCity, @Model.ShippingState, @Model.ShippingZip</p>
-            <p class="text-muted mb-2">Phone: @Model.Phone</p>
-            <p class="text-muted mb-2">Payment Method: @Model.Payment?.PaymentMethod</p>
-            <p class="text-muted">Payment Status: @Model.Payment?.PaymentStatus</p>
-        </div>
-        <div class="row row-cols-1 row-cols-md-2 g-3">
-            @foreach (var item in Model.OrderItems)
-            {
-                <div class="col">
-                    <div class="card h-100 p-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="@(string.IsNullOrWhiteSpace(item.Book?.ImageUrl) ? Url.Content("~/images/default-book.png") : item.Book!.ImageUrl)" alt="@item.Book?.Title" style="width:64px;height:90px;object-fit:cover;border-radius:8px;" />
-                            <div>
-                                <h6 class="mb-1">@item.Book?.Title</h6>
-                                <small class="text-muted">Qty: @item.Quantity</small>
-                            </div>
-                        </div>
-                        <div class="mt-3 d-flex justify-content-between">
-                            <span class="text-muted">Price</span>
-                            <span>₹@item.UnitPrice.ToString("0.00")</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <span class="text-muted">Subtotal</span>
-                            <span>₹@((item.UnitPrice * item.Quantity).ToString("0.00"))</span>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-    <div class="col-lg-4">
-        @if (User.IsInRole("ADMIN"))
-        {
-            <div class="card p-4">
-                <h4 class="mb-3">Customer</h4>
-                <p class="mb-1"><strong>@Model.User?.Username</strong></p>
-                <p class="text-muted">@Model.User?.Email</p>
-                <hr />
-                <h5>Update Order Status</h5>
-                <form asp-action="UpdateStatus" method="post">
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <div class="input-group mb-3" style="max-width: 300px;">
-                        <select class="form-select" name="status">
-                            @foreach (var status in Enum.GetValues(typeof(BookStoreMVC.Models.OrderStatus)))
-                            {
-                                if (status.Equals(Model.Status))
-                                {
-                                    <option value="@status" selected>@status</option>
-                                }
-                                else
-                                {
-                                    <option value="@status">@status</option>
-                                }
-                            }
-                        </select>
-                        <button type="submit" class="btn btn-primary">Update</button>
-                    </div>
-                </form>
-            </div>
-        }
+			<p class="text-muted mb-2">Total Amount: <strong>₹@Model.TotalAmount.ToString("0.00")</strong></p>
+			<p class="text-muted mb-2">Shipping To: <strong>@Model.ShippingName</strong></p>
+			<p class="text-muted mb-2">Address: @Model.ShippingAddress, @Model.ShippingCity, @Model.ShippingState, @Model.ShippingZip</p>
+			<p class="text-muted mb-2">Phone: @Model.Phone</p>
+			<p class="text-muted mb-2">Payment Method: @Model.Payment?.PaymentMethod</p>
+			<p class="text-muted">Payment Status: @Model.Payment?.PaymentStatus</p>
+		</div>
+		<div class="row row-cols-1 row-cols-md-2 g-3">
+			@foreach (var item in Model.OrderItems)
+			{
+				<div class="col">
+					<div class="card h-100 p-3">
+						<div class="d-flex align-items-center gap-3">
+							<img src="@(string.IsNullOrWhiteSpace(item.Book?.ImageUrl) ? Url.Content("~/images/default-book.png") : item.Book!.ImageUrl)" alt="@item.Book?.Title" style="width:64px;height:90px;object-fit:cover;border-radius:8px;" />
+							<div>
+								<h6 class="mb-1">@item.Book?.Title</h6>
+								<small class="text-muted">Qty: @item.Quantity</small>
+							</div>
+						</div>
+						<div class="mt-3 d-flex justify-content-between">
+							<span class="text-muted">Price</span>
+							<span>₹@item.UnitPrice.ToString("0.00")</span>
+						</div>
+						<div class="d-flex justify-content-between">
+							<span class="text-muted">Subtotal</span>
+							<span>₹@((item.UnitPrice * item.Quantity).ToString("0.00"))</span>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+	<div class="col-lg-4">
+		@if (User.IsInRole("ADMIN"))
+		{
+			Layout = "~/Views/Shared/_AdminLayout.cshtml";
+			<div class="card p-4">
+				<h4 class="mb-3">Customer</h4>
+				<p class="mb-1"><strong>@Model.User?.Username</strong></p>
+				<p class="text-muted">@Model.User?.Email</p>
+				<hr />
+				<h5>Update Order Status</h5>
+				<form asp-action="UpdateStatus" method="post">
+					<input type="hidden" name="id" value="@Model.Id" />
+					<div class="input-group mb-3" style="max-width: 300px;">
+						@{
+							// New Razor code to set the initial color class
+							string initialColorClass = GetStatusTextColor(Model.Status);
+						}
+						<select class="form-select @initialColorClass" name="status" id="orderStatusDropdown">
+							@foreach (var status in Enum.GetValues(typeof(BookStoreMVC.Models.OrderStatus)))
+							{
+								string statusText = status.ToString();
+								string colorClass = GetStatusTextColor((BookStoreMVC.Models.OrderStatus)status);
 
-        @if (!User.IsInRole("ADMIN"))
-        {
-            <div class="card p-4 mt-3">
-                @if (Model.Status == OrderStatus.DELIVERED)
-                {
-                    // --- MODIFIED FORM & BUTTON ---
-                    // The form now has a unique ID, and the button is of type "button" to trigger the script.
-                    <form asp-action="RequestReturn" method="post" class="d-grid gap-2" id="returnForm-@Model.Id">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@Model.Id" />
-                        <button type="button" class="btn btn-outline-primary js-return-button" data-order-id="@Model.Id">Request Return</button>
-                    </form>
-                }
-                else if (Model.Status == OrderStatus.PENDING || Model.Status == OrderStatus.SHIPPED)
-                {
-                    <form asp-action="Cancel" method="post" class="d-grid gap-2">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@Model.Id" />
-                        <button type="submit" class="btn btn-outline-danger">Cancel the Order</button>
-                    </form>
-                }
-                else if (Model.Status == OrderStatus.CANCELLED)
-                {
-                    <span class="text-danger">This order has been cancelled.</span>
-                }
-                else if (Model.Status == OrderStatus.RETURN_REQUESTED)
-                {
-                    <span class="text-warning">Return requested. We’ll process your return soon.</span>
-                }
-                else if (Model.Status == OrderStatus.RETURN_SHIPPED)
-                {
-                    <span class="text-info">Return shipment is on the way.</span>
-                }
-                else if (Model.Status == OrderStatus.RETURN_DELIVERED)
-                {
-                    <span class="text-success">Return completed and delivered.</span>
-                }
-            </div>
-        }
-    </div>
+								if (status.Equals(Model.Status))
+								{
+									<option value="@status" selected class="@colorClass">@ToSentenceCase(statusText)</option>
+								}
+								else
+								{
+									<option value="@status" class="@colorClass">@ToSentenceCase(statusText)</option>
+								}
+							}
+						</select>
+						<button type="submit" class="btn btn-primary">Update</button>
+					</div>
+				</form>
+			</div>
+		}
+
+		@if (!User.IsInRole("ADMIN"))
+		{
+			<div class="card p-4 mt-3">
+				@if (Model.Status == OrderStatus.DELIVERED)
+				{
+					// --- MODIFIED FORM & BUTTON ---
+					// The form now has a unique ID, and the button is of type "button" to trigger the script.
+					<form asp-action="RequestReturn" method="post" class="d-grid gap-2" id="returnForm-@Model.Id">
+						@Html.AntiForgeryToken()
+						<input type="hidden" name="id" value="@Model.Id" />
+						<button type="button" class="btn btn-outline-primary js-return-button" data-order-id="@Model.Id">Request Return</button>
+					</form>
+				}
+				else if (Model.Status == OrderStatus.PENDING || Model.Status == OrderStatus.SHIPPED)
+				{
+					<form asp-action="Cancel" method="post" class="d-grid gap-2">
+						@Html.AntiForgeryToken()
+						<input type="hidden" name="id" value="@Model.Id" />
+						<button type="submit" class="btn btn-outline-danger">Cancel the Order</button>
+					</form>
+				}
+				else if (Model.Status == OrderStatus.CANCELLED)
+				{
+					<span class="text-danger">This order has been cancelled.</span>
+				}
+				else if (Model.Status == OrderStatus.RETURN_REQUESTED)
+				{
+					<span class="text-warning">Return requested. We’ll process your return soon.</span>
+				}
+				else if (Model.Status == OrderStatus.RETURN_SHIPPED)
+				{
+					<span class="text-info">Return shipment is on the way.</span>
+				}
+				else if (Model.Status == OrderStatus.RETURN_DELIVERED)
+				{
+					<span class="text-success">Return completed and delivered.</span>
+				}
+			</div>
+		}
+	</div>
 </div>
 
 @* --- ADDED MODAL HTML (DEFINED ONCE OUTSIDE THE LOOP) --- *@
 <div class="modal fade" id="returnPolicyModal" tabindex="-1" aria-labelledby="returnPolicyLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="returnPolicyLabel">Return & Replacement Policy</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="modalOrderId" value="" />
-                <p class="mb-2">This return is available <strong>only for damaged books</strong> and must be requested <strong>within 1–2 days</strong> of delivery.</p>
-                <ul class="mb-3">
-                    <li>Provide photos of the damage if requested.</li>
-                    <li>Include the invoice/packing slip in the package.</li>
-                    <li>Pickup / return instructions will be shared after approval.</li>
-                </ul>
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="returnPolicyLabel">Return & Replacement Policy</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" id="modalOrderId" value="" />
+				<p class="mb-2">This return is available <strong>only for damaged books</strong> and must be requested <strong>within 1–2 days</strong> of delivery.</p>
+				<ul class="mb-3">
+					<li>Provide photos of the damage if requested.</li>
+					<li>Include the invoice/packing slip in the package.</li>
+					<li>Pickup / return instructions will be shared after approval.</li>
+				</ul>
 
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="policyAckChk">
-                    <label class="form-check-label" for="policyAckChk">
-                        I confirm I’m returning due to damage and I’m within 1–2 days of delivery.
-                    </label>
-                </div>
-                <div id="policyError" class="text-danger small mt-2 d-none">Please tick the confirmation to continue.</div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" id="confirmReturnPolicy" class="btn btn-primary">I Agree</button>
-            </div>
-        </div>
-    </div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" id="policyAckChk">
+					<label class="form-check-label" for="policyAckChk">
+						I confirm I’m returning due to damage and I’m within 1–2 days of delivery.
+					</label>
+				</div>
+				<div id="policyError" class="text-danger small mt-2 d-none">Please tick the confirmation to continue.</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" id="confirmReturnPolicy" class="btn btn-primary">I Agree</button>
+			</div>
+		</div>
+	</div>
 </div>
-
-@functions {
-    // Helper to get badge classes for order status
-    private string GetBadgeClass(BookStoreMVC.Models.OrderStatus status)
-    {
-        return status switch
-        {
-            OrderStatus.PENDING => "text-bg-warning",
-            OrderStatus.SHIPPED => "text-bg-info",
-            OrderStatus.DELIVERED => "text-bg-success",
-            OrderStatus.CANCELLED => "text-bg-danger",
-            OrderStatus.RETURN_REQUESTED => "text-bg-warning",
-            OrderStatus.RETURN_SHIPPED => "text-bg-info",
-            OrderStatus.RETURN_DELIVERED => "text-bg-success",
-            _ => "text-bg-secondary"
-        };
-    }
-}
 
 @* --- ADDED SCRIPT SECTION FOR MODAL LOGIC --- *@
 @section Scripts {
-    <script>
-        $(function () {
-            // Handle click on the "Request Return" button
-            $('.js-return-button').on('click', function () {
-                var orderId = $(this).data('order-id');
+	<script>
+		$(function () {
+			// Handle click on the "Request Return" button
+			$('.js-return-button').on('click', function () {
+				var orderId = $(this).data('order-id');
+				$('#modalOrderId').val(orderId);
+				$('#policyError').addClass('d-none');
+				$('#policyAckChk').prop('checked', false);
+				$('#returnPolicyModal').modal('show');
+			});
 
-                // Store the current order ID in the modal's hidden input
-                $('#modalOrderId').val(orderId);
+			// Handle click on "I Agree" button inside the modal
+			$('#confirmReturnPolicy').on('click', function () {
+				var orderId = $('#modalOrderId').val();
+				if (!$('#policyAckChk').is(':checked')) {
+					$('#policyError').removeClass('d-none'); // Show error message
+					return; // Stop execution
+				}
+				$('#returnForm-' + orderId).submit();
+			});
 
-                // Reset the modal state before showing
-                $('#policyError').addClass('d-none');
-                $('#policyAckChk').prop('checked', false);
+			// --- NEW CODE: Dropdown Color Logic ---
+			var dropdown = $('#orderStatusDropdown');
+			dropdown.on('change', function() {
+				var selectedClass = $(this).find('option:selected').attr('class');
+				$(this).removeClass("text-warning text-info text-success text-danger text-secondary");
+				$(this).addClass(selectedClass);
+			});
+		});
+	</script>
+}
 
-                // Show the policy modal
-                $('#returnPolicyModal').modal('show');
-            });
+@functions {
+	private string ToSentenceCase(string input)
+	{
+		if (string.IsNullOrEmpty(input))
+		{
+			return string.Empty;
+		}
 
-            // Handle click on "I Agree" button inside the modal
-            $('#confirmReturnPolicy').on('click', function () {
-                var orderId = $('#modalOrderId').val();
+		var words = input.Replace("_", " ").ToLower().Split(' ');
+		for (int i = 0; i < words.Length; i++)
+		{
+			if (words[i].Length > 0)
+			{
+				words[i] = char.ToUpper(words[i][0]) + words[i].Substring(1);
+			}
+		}
+		return string.Join(" ", words);
+	}
+	// Helper to get text color classes for order status in the dropdown
+	private string GetStatusTextColor(BookStoreMVC.Models.OrderStatus status)
+	{
+		return status switch
+		{
+			OrderStatus.PENDING => "text-warning",
+			OrderStatus.SHIPPED => "text-info",
+			OrderStatus.DELIVERED => "text-success",
+			OrderStatus.CANCELLED => "text-danger",
+			OrderStatus.RETURN_REQUESTED => "text-warning",
+			OrderStatus.RETURN_SHIPPED => "text-info",
+			OrderStatus.RETURN_DELIVERED => "text-success",
+			_ => "text-secondary"
+		};
+	}
 
-                // Check if the confirmation checkbox is ticked
-                if (!$('#policyAckChk').is(':checked')) {
-                    $('#policyError').removeClass('d-none'); // Show error message
-                    return; // Stop execution
-                }
-
-                // If checkbox is ticked, find the correct form by its ID and submit it
-                $('#returnForm-' + orderId).submit();
-            });
-        });
-    </script>
+	// Helper to get badge classes for order status
+	private string GetBadgeClass(BookStoreMVC.Models.OrderStatus status)
+	{
+		return status switch
+		{
+			OrderStatus.PENDING => "text-bg-warning",
+			OrderStatus.SHIPPED => "text-bg-info",
+			OrderStatus.DELIVERED => "text-bg-success",
+			OrderStatus.CANCELLED => "text-bg-danger",
+			OrderStatus.RETURN_REQUESTED => "text-bg-warning",
+			OrderStatus.RETURN_SHIPPED => "text-bg-info",
+			OrderStatus.RETURN_DELIVERED => "text-bg-success",
+			_ => "text-bg-secondary"
+		};
+	}
 }

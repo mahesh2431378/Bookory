@@ -15,6 +15,32 @@
         border: none;
         box-shadow: none;
     }
+
+    .payment-method-card {
+        border: 1px solid #dee2e6;
+        border-radius: .5rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        background-color: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+    }
+
+        .payment-method-card.active {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+        }
+
+    .upi-input-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .upi-input-group .form-control {
+            flex-grow: 1;
+        }
+
 </style>
 
 <div class="payment-bg">
@@ -27,7 +53,6 @@
         </div>
 
         <div class="row g-4">
-            <!-- Left: Payment Form -->
             <div class="col-lg-7">
                 <div class="card p-4 no-bg">
                     <form asp-action="Payment" method="post" id="paymentForm">
@@ -36,23 +61,20 @@
                         <input type="hidden" asp-for="Amount" value="@total" />
                         <input type="hidden" asp-for="Success" value="true" />
 
-                        <!-- UPI Option -->
                         <div class="payment-method-card" id="cardUPI">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" asp-for="Method" id="mUPI" value="UPI" checked />
                                 <label class="form-check-label fw-semibold" for="mUPI">
-                                    <img src="~/images/upi.png" style="width: 30px; height: auto; margin-right: 10px;">UPI
+                                    <img src="~/images/upi.png" style="width: 30px; height: auto; margin-right: 10px;"> UPI
                                 </label>
                             </div>
                             <div class="mt-2" id="upiBlock">
-                                <label asp-for="UpiId" class="form-label">UPI ID</label>
-                                <input asp-for="UpiId" class="form-control" placeholder="yourname@bank" />
-                                <div class="upi-hint mt-1">Format: <code>name@provider</code> (e.g., <em>arun@okicici</em>)</div>
-                                <div class="text-center my-3 fw-semibold text-white">OR</div>
-                                <div class="mt-3 text-center">
-                                    <img src="~/images/dummy-qr.jpg" alt="UPI QR Code" style="width: 150px; height: 150px;" />
-                                    <div class="text-muted mt-1">Scan this QR with your UPI app</div>
+                                <label asp-for="UpiId" class="form-label">Enter your UPI ID</label>
+                                <div class="upi-input-group">
+                                    <input asp-for="UpiId" class="form-control" placeholder="yourname@bank" />
+                             
                                 </div>
+                                <div class="upi-hint mt-1 text-muted">Example: <em>arun@okicici</em></div>
                                 <div class="d-flex justify-content-end gap-2 mt-4">
                                     <a asp-controller="Cart" asp-action="Checkout" class="btn btn-outline-primary">Back</a>
                                     <button class="btn btn-primary" type="submit">Pay ₹@total.ToString("0.00")</button>
@@ -60,7 +82,6 @@
                             </div>
                         </div>
 
-                        <!-- Card Option -->
                         <div class="payment-method-card" id="cardCARD">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" asp-for="Method" id="mCARD" value="CARD" />
@@ -94,7 +115,6 @@
                             </div>
                         </div>
 
-                        <!-- COD Option -->
                         <div class="payment-method-card" id="cardCOD">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" asp-for="Method" id="mCOD" value="COD" />
@@ -113,7 +133,6 @@
                 </div>
             </div>
 
-            <!-- Right: Order Summary -->
             <div class="col-lg-5">
                 <div class="card p-4 summary-card no-bg">
                     <h5 class="mb-3">Order Summary</h5>
@@ -122,7 +141,7 @@
                     <div class="line"><span>Shipping</span><span>₹@shipping.ToString("0.00")</span></div>
                     <hr />
                     <div class="line total"><span>Total</span><span>₹@total.ToString("0.00")</span></div>
-                    <small class="text-muted d-block mt-2">Choose UPI or card to complete your purchase securely.</small>
+                    
                 </div>
             </div>
         </div>
@@ -186,4 +205,3 @@
         });
     </script>
 }
-

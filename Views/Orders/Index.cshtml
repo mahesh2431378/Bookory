@@ -6,6 +6,7 @@
 
 <h2 class="mb-3">@ViewData["Title"]</h2>
 
+
 @if (!Model.Any())
 {
     <div class="alert alert-info">No orders yet.</div>
@@ -14,6 +15,28 @@ else
 {
     @if (isAdmin)
     {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+        string FormatStatus(string status)
+        {
+            // Replace underscores with spaces (e.g., "RETURN_REQUESTED" -> "RETURN REQUESTED")
+            var withSpaces = status.Replace("_", " ");
+            // Change to "Title Case" so the first letter of each word is capitalized (e.g., "return requested" -> "Return Requested")
+            return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(withSpaces.ToLower());
+        }
+        string GetStatusColorClass(string status)
+        {
+            return status switch
+            {
+                "PENDING" => "text-warning",
+                "SHIPPED" => "text-info",
+                "DELIVERED" => "text-success",
+                "CANCELLED" => "text-danger",
+                "RETURN_REQUESTED" => "text-warning",
+                "RETURN_SHIPPED" => "text-info",
+                "RETURN_DELIVERED" => "text-success",
+                _ => "text-secondary" // Default color for other statuses
+            };
+        }
         // Admin table view remains unchanged
         <div class="table-responsive card p-2 p-md-3 product-card">
             <table class="table align-middle mb-0">
@@ -36,7 +59,11 @@ else
                             <td>@o.User?.Username</td>
                             <td class="text-center">@o.OrderItems.Count</td>
                             <td class="text-end">₹@o.TotalAmount.ToString("0.00")</td>
-                            <td class="text-center">@o.Status</td>
+                            <td class="text-center">
+                                <span class="@GetStatusColorClass(o.Status.ToString())">
+                                    @FormatStatus(o.Status.ToString())
+                                </span>
+                            </td>
                             <td class="text-end">@o.OrderDate.ToString("yyyy-MM-dd")</td>
                             <td class="text-end">
                                 <a class="btn btn-outline-primary btn-sm btn-rounded" asp-action="Details" asp-route-id="@o.Id">View</a>
@@ -57,16 +84,16 @@ else
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <div class="fw-bold">Order #@o.Id</div>
-                            <small class="text-muted">@o.OrderDate.ToString("yyyy-MM-dd HH:mm")</small>
+                            <small class="text-muted">@o.OrderDate.ToString("yyyy-MM-dd")</small>
                         </div>
-                        <span class="badge @(o.Status == OrderStatus.PENDING ? "text-bg-warning" :
-                                                                                                     o.Status == OrderStatus.SHIPPED ? "text-bg-info" :
-                                                                                                     o.Status == OrderStatus.DELIVERED ? "text-bg-success" :
-                                                                                                     o.Status == OrderStatus.CANCELLED ? "text-bg-danger" :
-                                                                                                     o.Status == OrderStatus.RETURN_REQUESTED ? "text-bg-warning" :
-                                                                                                     o.Status == OrderStatus.RETURN_SHIPPED ? "text-bg-info" :
-                                                                                                     o.Status == OrderStatus.RETURN_DELIVERED ? "text-bg-success" :
-                                                                                                     "text-bg-secondary")">
+                        <span class="badge @(o.Status == OrderStatus.PENDING ? "text-warning" :
+                                                                                                                                   o.Status == OrderStatus.SHIPPED ? "text-info" :
+                                                                                                                                   o.Status == OrderStatus.DELIVERED ? "text-success" :
+                                                                                                                                   o.Status == OrderStatus.CANCELLED ? "text-danger" :
+                                                                                                                                   o.Status == OrderStatus.RETURN_REQUESTED ? "text-warning" :
+                                                                                                                                   o.Status == OrderStatus.RETURN_SHIPPED ? "text-info" :
+                                                                                                                                   o.Status == OrderStatus.RETURN_DELIVERED ? "text-success" :
+                                                                                                                                   "text-secondary")">
                 @o.Status.ToString().Replace("_", " ")
             </span>
         </div>

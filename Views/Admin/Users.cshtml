@@ -1,8 +1,29 @@
 @model IEnumerable<BookStoreMVC.Models.User>
+
 @{
+
     ViewData["Title"] = "Customers";
+
     // Use admin layout for this page
+
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    // Add the FormatStatus function here
+
+    string FormatStatus(string status)
+
+    {
+
+        // Replace underscores with spaces (e.g., "RETURN_REQUESTED" -> "RETURN REQUESTED")
+
+        var withSpaces = status.Replace("_", " ");
+
+        // Change to "Title Case" so the first letter of each word is capitalized (e.g., "return requested" -> "Return Requested")
+
+        return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(withSpaces.ToLower());
+
+    }
+
 }
 
 <h2 class="mb-3">Customers</h2>
@@ -13,19 +34,32 @@
             <tr>
                 <th>ID</th>
                 <th>Username</th>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>DateOfBirth</th>
+                <th>Gender</th>
                 <th>Email</th>
-                <th>Role</th>
+                <th>Address</th>
+                <th>PhoneNumber</th>
             </tr>
         </thead>
         <tbody>
+
             @foreach (var u in Model)
+
             {
                 <tr>
                     <td>@u.Id</td>
                     <td>@u.Username</td>
+                    <td>@u.FirstName</td>
+                    <td>@u.LastName</td>
+                    <td>@u.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                    <td class="text-center">@FormatStatus(u.Gender.ToString())</td>
                     <td>@u.Email</td>
-                    <td>@u.Role</td>
+                    <td>@u.Address</td>
+                    <td>@u.Phone</td>
                 </tr>
+
             }
         </tbody>
     </table>

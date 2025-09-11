@@ -1,9 +1,15 @@
 @model IEnumerable<BookStoreMVC.Models.Order>
+
 @{
+
     ViewData["Title"] = "Dashboard";
+
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
     // Get the most recent order from the ViewBag
+
     var firstOrder = ViewBag.MostRecentOrder as BookStoreMVC.Models.Order;
+
 }
 
 <div class="page-header">
@@ -62,7 +68,7 @@
     </div>
     <div class="col-md-4">
         <a class="dashboard-card management-card" asp-controller="Admin" asp-action="Users">
-            <div class="card-title"><i class="bi bi-person-gear"></i>Manage Customers</div>
+            <div class="card-title"><i class="bi bi-person-gear"></i>Customer Details</div>
         </a>
     </div>
 </div>
@@ -88,8 +94,11 @@
                         </tr>
                     </thead>
                     <tbody>
+
                         @if (Model != null && Model.Any())
+
                         {
+
                             @foreach (var o in ((IEnumerable<BookStoreMVC.Models.Order>)Model).OrderByDescending(o => o.OrderDate).Take(5))
 
                             {
@@ -99,29 +108,42 @@
                                     <td class="text-center">@o.OrderItems.Count</td>
                                     <td class="text-end">₹@o.TotalAmount.ToString("0.00")</td>
                                     <td class="text-center">
-                                        <span class="badge @(o.Status == OrderStatus.PENDING ? "text-bg-warning" :
-                                                                                              o.Status == OrderStatus.SHIPPED ? "text-bg-info" :
-                                                                                              o.Status == OrderStatus.DELIVERED ? "text-bg-success" :
-                                                                                              o.Status == OrderStatus.CANCELLED ? "text-bg-danger" :
-                                                                                              "text-bg-secondary")">
+                                        <span class="badge @(o.Status == OrderStatus.PENDING ? "text-warning" :
+
+                                              o.Status == OrderStatus.SHIPPED ? "text-info" :
+
+                                              o.Status == OrderStatus.DELIVERED ? "text-success" :
+
+                                              o.Status == OrderStatus.CANCELLED ? "text-danger" :
+
+                                              "text-secondary")">
+
                                     @o.Status.ToString().Replace("_", " ")
                                 </span>
                             </td>
                             <td class="text-end">@o.OrderDate.ToString("yyyy-MM-dd")</td>
-                            <td class="text-end">
-                                <a class="btn btn-outline-primary btn-sm btn-rounded"
+
+                                    @* <td class="text-end">
+<a class="btn btn-outline-primary btn-sm btn-rounded"
+
                                    asp-controller="Orders" asp-action="Details" asp-route-id="@o.Id">
+
                                     View
-                                </a>
-                            </td>
-                        </tr>
+</a>
+</td> *@
+                                </tr>
+
                                                 }
+
                         }
+
                         else
+
                         {
                             <tr>
                                 <td colspan="7" class="text-center text-muted">No recent orders to display.</td>
                             </tr>
+
                         }
                     </tbody>
                 </table>

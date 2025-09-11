@@ -24,9 +24,21 @@ namespace BookStoreMVC.Controllers
             ViewBag.TotalUsers = await _context.Users.CountAsync();
             ViewBag.TotalBooks = await _context.Books.CountAsync();
             ViewBag.TotalOrders = await _context.Orders.CountAsync();
-            ViewBag.TotalSales = await _context.Payments
-                                                .Where(p => p.PaymentStatus == PaymentStatus.COMPLETED)
-                                                .SumAsync(p => p.Amount); // More accurate for actual sales
+            // Get the sum of all completed payments
+            var totalCompletedSales = await _context.Payments
+                                                 .Where(p => p.PaymentStatus == PaymentStatus.COMPLETED)
+                                                 .SumAsync(p => p.Amount);
+
+            // Get the sum of all payments for cancelled orders
+            // Assuming your Payment entity has a navigation property or foreign key to an Order entity
+            // Get the sum of all payments for cancelled orders
+            var cancelledSales = await _context.Payments
+                                            .Where(p => p.PaymentStatus == PaymentStatus.COMPLETED &&
+                                                      p.Order.Status == OrderStatus.CANCELLED)
+                                            .SumAsync(p => p.Amount);
+
+            // Subtract the cancelled sales from the total completed sales
+            ViewBag.TotalSales = totalCompletedSales - cancelledSales;
 
             // --- Part 2: Fetch recent orders to display on the dashboard ---
             // This feature is from the second code and makes the dashboard much more useful.

@@ -1,5 +1,6 @@
 @model BookStoreMVC.Models.Book
 @{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "Add Book";
     var categories = ViewBag.Categories as List<BookStoreMVC.Models.Category>;
 }

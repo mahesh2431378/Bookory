@@ -23,13 +23,13 @@
               aria-controls="adminNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div id="adminNav" class="collapse navbar-collapse">
+      @* <div id="adminNav" class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item"><a asp-controller="Admin" asp-action="Dashboard" class="nav-link">Dashboard</a></li>
           <li class="nav-item"><a asp-controller="Books" asp-action="Index" class="nav-link">Manage Books</a></li>
           <li class="nav-item"><a asp-controller="Orders" asp-action="Index" class="nav-link">Manage Orders</a></li>
           <li class="nav-item"><a asp-controller="Admin" asp-action="Users" class="nav-link">Manage Customers</a></li>
-        </ul>
+        </ul> *@
         <ul class="navbar-nav ms-auto">
           @if (User?.Identity?.IsAuthenticated ?? false)
           {
@@ -39,10 +39,14 @@
                   <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="adminUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="bi bi-person-circle me-1"></i><span>@uname</span>
                   </a>
-                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminUserDropdown">
-                      <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
-                  </ul>
-              </li>
+                        <ul class="dropdown-menu MX-auto" aria-labelledby="adminUserDropdown">
+                            <li><a class="dropdown-item px-2 py-1" asp-controller="Books" asp-action="Index">Manage Books </a></li>
+                            <li><a class="dropdown-item px-2 py-1" asp-controller="Orders" asp-action="Index">Manage Orders</a></li>
+                            <li><a class="dropdown-item px-2 py-1" asp-controller="Admin" asp-action="Users">Customer Details</a></li>
+                            <li><a class="dropdown-item px-2 py-1" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                        </ul>
+
+                    </li>
           }
           else
           {

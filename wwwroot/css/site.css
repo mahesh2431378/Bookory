@@ -249,6 +249,37 @@ footer.bg-dark {
     color: #6c757d;
 }
 
+.card.no-bg {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.payment-method-card {
+    border: 1px solid #dee2e6;
+    border-radius: .5rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+    .payment-method-card.active {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
+    }
+
+.upi-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+    .upi-input-group .form-control {
+        flex-grow: 1;
+    }
+
 
 
 /* Cart thumbnails */

@@ -4,10 +4,10 @@ using BookStoreMVC.Controllers;
 
 namespace BookStoreMVC.Services
 {
-    /// <summary>
-    /// Implements order operations using Entity Framework.
-    /// </summary>
-    public class OrderService : IOrderService
+    /// <summary>
+    /// Implements order operations using Entity Framework.
+    /// </summary>
+    public class OrderService : IOrderService
     {
         private readonly ApplicationDbContext _context;
 
@@ -47,8 +47,8 @@ namespace BookStoreMVC.Services
 
         public async Task<Order> CreateOrderAsync(int userId, CheckoutVm vm)
         {
-            // Begin a database transaction to ensure all operations succeed or fail together.
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            // Begin a database transaction to ensure all operations succeed or fail together.
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -81,17 +81,17 @@ namespace BookStoreMVC.Services
                     _context.Orders.Add(order);
                     await _context.SaveChangesAsync(); // Save to generate the new order.Id
 
-                    foreach (var item in cartItems)
+                    foreach (var item in cartItems)
                     {
-                        // Check for sufficient stock before proceeding
-                        if (item.Book!.StockQuantity < item.Quantity)
+                        // Check for sufficient stock before proceeding
+                        if (item.Book!.StockQuantity < item.Quantity)
                         {
-                            // If stock is insufficient, the transaction will be rolled back.
-                            throw new InvalidOperationException($"Not enough stock for book: {item.Book.Title}");
+                            // If stock is insufficient, the transaction will be rolled back.
+                            throw new InvalidOperationException($"Not enough stock for book: {item.Book.Title}");
                         }
 
-                        // Reduce the stock quantity of the book
-                        item.Book.StockQuantity -= item.Quantity;
+                        // Reduce the stock quantity of the book
+                        item.Book.StockQuantity -= item.Quantity;
 
                         _context.OrderItems.Add(new OrderItem
                         {
@@ -105,35 +105,35 @@ namespace BookStoreMVC.Services
                     _context.CartItems.RemoveRange(cartItems);
                     await _context.SaveChangesAsync();
 
-                    // If all operations are successful, commit the transaction.
-                    await transaction.CommitAsync();
+                    // If all operations are successful, commit the transaction.
+                    await transaction.CommitAsync();
 
                     return order;
                 }
                 catch (Exception)
                 {
-                    // If any operation fails, roll back all changes to the database.
-                    await transaction.RollbackAsync();
+                    // If any operation fails, roll back all changes to the database.
+                    await transaction.RollbackAsync();
                     throw; // Re-throw the exception.
-                }
+                }
             }
         }
 
         public async Task UpdateStatusAsync(int orderId, OrderStatus status)
         {
-            // Eagerly load the related Payment object
-            var order = await _context.Orders
-        .Include(o => o.Payment)
-        .FirstOrDefaultAsync(o => o.Id == orderId);
+            // Eagerly load the related Payment object
+            var order = await _context.Orders
+                .Include(o => o.Payment)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (order != null)
             {
                 order.Status = status;
 
-                // If the order is delivered, mark the payment as completed
-                if (status == OrderStatus.DELIVERED)
+                // If the order is delivered, mark the payment as completed
+                if (status == OrderStatus.DELIVERED)
                 {
-                    order.PaymentStatus = PaymentStatus.COMPLETED;
+                    // The incorrect line has been removed.
                     if (order.Payment != null)
                     {
                         order.Payment.PaymentStatus = PaymentStatus.COMPLETED;

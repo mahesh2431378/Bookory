@@ -19,7 +19,7 @@ namespace BookStoreMVC.Models
 
     public class Order
     {
-        internal PaymentStatus PaymentStatus;
+        
 
         [Key]
         public int Id { get; set; }
@@ -47,5 +47,6 @@ namespace BookStoreMVC.Models
 
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public Payment? Payment { get; set; }
+
     }
 }

@@ -75,30 +75,47 @@ namespace BookStoreMVC.Controllers
         /// <summary>
         /// (Admin-only) Updates the status of an order.
         /// If the status is set to DELIVERED, it also updates the payment status to COMPLETED.
+        /// If the status is set to CANCELLED, it returns items to stock.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> UpdateStatus(int id, OrderStatus status)
         {
-            // Eagerly load the related Payment object to update it if necessary
+            // Eagerly load related objects to update them if necessary
             var order = await _context.Orders
-                                    .Include(o => o.Payment)
-                                    .FirstOrDefaultAsync(o => o.Id == id);
+                .Include(o => o.Payment)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Book)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
             if (order == null)
             {
                 return NotFound();
             }
 
+            // Store the original status to compare against the new one
+            var oldStatus = order.Status;
+
             // Update the order's status
             order.Status = status;
+
+            // --- NEW LOGIC: Return items to stock if order is cancelled ---
+            // This logic runs only if the status is changed TO Cancelled FROM something else.
+            if (status == OrderStatus.CANCELLED && oldStatus != OrderStatus.CANCELLED)
+            {
+                foreach (var item in order.OrderItems)
+                {
+                    if (item.Book != null)
+                    {
+                        item.Book.StockQuantity += item.Quantity;
+                    }
+                }
+            }
 
             // **CRITICAL LOGIC**: If the order is delivered, complete the payment status.
             if (status == OrderStatus.DELIVERED)
             {
-                order.PaymentStatus = PaymentStatus.COMPLETED;
-
                 if (order.Payment != null)
                 {
                     order.Payment.PaymentStatus = PaymentStatus.COMPLETED;
@@ -137,17 +154,23 @@ namespace BookStoreMVC.Controllers
         /// <summary>
         /// Customer-initiated cancellation of an order.  
         /// Cancels only if the order isn’t already delivered, cancelled or in the return process.
+        /// When cancelled, returns items to stock.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
+            // Must include OrderItems and Books to update stock quantity
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Book)
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == userId);
 
             if (order == null)
                 return NotFound();
 
+            // Check if the order is in a state that allows cancellation
             if (order.Status == OrderStatus.DELIVERED ||
                 order.Status == OrderStatus.CANCELLED ||
                 order.Status == OrderStatus.RETURN_REQUESTED ||
@@ -155,6 +178,16 @@ namespace BookStoreMVC.Controllers
                 order.Status == OrderStatus.RETURN_DELIVERED)
             {
                 return RedirectToAction(nameof(Details), new { id });
+            }
+
+            // --- NEW LOGIC: Return items to stock if order is cancelled ---
+            // The check above ensures we don't re-add stock for an already cancelled order.
+            foreach (var item in order.OrderItems)
+            {
+                if (item.Book != null)
+                {
+                    item.Book.StockQuantity += item.Quantity;
+                }
             }
 
             order.Status = OrderStatus.CANCELLED;

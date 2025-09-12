@@ -1,0 +1,206 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Contact Us";
+}
+
+<style>
+    /* CSS for the animated shine effect on the hero background */
+    .hero-contact {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .hero-contact .container {
+            position: relative;
+            z-index: 2;
+        }
+
+    .shine-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient( 90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100% );
+        transform: translateX(-100%);
+        animation: simple-shine 3s infinite linear;
+        z-index: 1;
+    }
+
+
+
+    /* Custom Orange Color Palette from the provided image */
+    .card-pale-orange {
+        background-color: #fce7d8; /* Light, peachy orange for card background */
+        border-color: #f89e49; /* Border color */
+    }
+
+    .btn-custom-orange {
+        background-color: #f89e49; /* Primary orange for the button */
+        border-color: #f89e49;
+        color: white;
+    }
+
+        .btn-custom-orange:hover {
+            background-color: #e58d3c; /* A slightly darker orange for hover */
+            border-color: #e58d3c;
+        }
+
+    /* Override Bootstrap defaults for focus and hover states */
+    .form-control:focus {
+        border-color: #f89e49;
+        box-shadow: 0 0 0 0.25rem rgba(248, 158, 73, 0.25);
+        outline: none;
+    }
+
+    .accordion-button:not(.collapsed)::after {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e58d3c'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    }
+
+    .accordion-button:focus {
+        border-color: #e58d3c;
+        box-shadow: 0 0 0 0.25rem rgba(248, 158, 73, 0.25);
+        outline: none;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: #f89e49;
+        color: white;
+    }
+</style>
+
+<div class="hero-contact text-white text-center py-5" style="background: url('https://i.pinimg.com/736x/b5/4a/42/b54a428ff11b92c334fff39b4ac8cfd6.jpg') no-repeat center center; background-size: cover;">
+    <div class="container py-5">
+        <h1 class="display-4 font-weight-bold text-black">Contact Us</h1>
+        <p class="lead text-black">
+            Due to high volume of orders and interactions, it may take longer for you to respond. We are working diligently during this critical time and we appreciate your patience.
+        </p>
+    </div>
+    <div class="shine-overlay"></div>
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card h-100 rounded-3 shadow-lg card-pale-orange">
+                <div class="card-body">
+                    <h2 class="h3 mb-4 card-title">We're happy to help!</h2>
+                    <p class="card-text">Questions, concerns...? We want to help. Send us a message below.</p>
+                    <form id="contactForm" action="#" method="post">
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="* Your Name" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="* Your email" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" rows="5" placeholder="* Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-lg btn-custom-orange">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card h-100 rounded-3 shadow-lg card-pale-orange">
+                <div class="card-body">
+                    <h2 class="h3 mb-4 card-title">FAQs</h2>
+                    <p>Have a quick question? Check our FAQs for a quick answer.</p>
+                    <div class="accordion accordion-flush mt-4" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    How do I place an order?
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    To place an order, simply browse our catalog, add your desired books to the cart, and proceed to checkout. You'll need to provide shipping and payment information to complete your purchase.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    What payment methods do you accept?
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    We accept major credit cards (Visa, MasterCard, American Express), PayPal, and other secure online payment options. All transactions are encrypted for your security.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    What is your return policy?
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    We offer a 30-day return policy for most items in new and unused condition. Please see our <a href="#">Returns & Refunds</a> page for full details and instructions on how to initiate a return.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    Do you ship internationally?
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body text-muted">
+                                    Yes, we do! We offer international shipping to many countries. Shipping costs and delivery times for international orders will be calculated at checkout.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card rounded-3 shadow-lg card-pale-orange">
+                <div class="card-body d-flex flex-column flex-md-row align-items-md-start">
+                    <div class="mb-4 mb-md-0 me-md-4">
+                        <img src="https://maps.zomato.com/php/staticmap?center=12.9835531576,80.2224274725&maptype=zomato&markers=12.9835531576,80.2224274725,pin_res32&sensor=false&scale=2&zoom=16&language=en&size=240x150&size=400x240&size=525x300" class="img-fluid rounded" alt="Dummy Map" style="max-width: 400px;">
+                    </div>
+                    <div>
+                        <h2 class="h3 mb-4 card-title text-center">Contact Info</h2>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5 class="mt-4">Office</h5>
+                                <p class="text-muted">Velacherry 600028,Chennai,<br />Tamil Nadu</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5 class="mt-4">Email us</h5>
+                                <p class="text-muted">
+                                    <a href="mailto:support@bookory.com">support@bookory.com</a>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <h5 class="mt-4">Call us</h5>
+                                <p class="text-muted">
+                                    Phone: +91 9933354326 <br>
+                                    9:00AM - 5:00PM IST
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        alert('Message submitted!');
+        this.reset();
+    });
+</script>

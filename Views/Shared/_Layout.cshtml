@@ -38,7 +38,10 @@
                     {
                         // STANDARD USER & GUEST NAVIGATION
                         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="Index">Books</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="Index">Shop</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="AboutUs">About </a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact </a></li>
+
 
                         @if (User.Identity?.IsAuthenticated == true)
                         {
@@ -102,17 +105,17 @@
                     <ul class="list-unstyled footer-links ">
                         <li><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-white">Home</a></li>
                         <li><a asp-controller="Books" asp-action="Index" class="text-decoration-none  text-white">Shop</a></li>
-                        <li><a href="#" class="text-decoration-none  text-white">About Us</a></li>
-                        <li><a href="#" class="text-decoration-none  text-white">Contact</a></li>
+                        <li><a asp-controller="Home" asp-action="AboutUs" class="text-decoration-none  text-white">About</a></li>
+                        <li><a asp-controller="Home" asp-action="ContactUs" class="text-decoration-none  text-white">Contact</a></li>
                     </ul>
                 </div>
 
                 <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase mb-3">Contact Us</h5>
+                    <h5 class="text-uppercase mb-3">Contact</h5>
                     <ul class="list-unstyled text-white-50">
                         <li class="d-flex align-items-start mb-2">
                             <i class="bi bi-geo-alt-fill me-2 pt-1"></i>
-                            <span>Saravanampati 641035,Coimbatore,Tamil Nadu</span>
+                            <span>Velacherry 600028,Chennai,Tamil Nadu</span>
                         </li>
                         <li class="d-flex align-items-center mb-2">
                             <i class="bi bi-telephone-fill me-2"></i>

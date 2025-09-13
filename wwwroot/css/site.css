@@ -28,7 +28,6 @@
     --shadow: 0 6px 24px rgba(0, 0, 0, .08);
     /* ENHANCEMENT: Central variable for consistent animation speed. */
     --transition-speed: 0.2s ease-in-out;
-
 }
 
 /* Base styles */
@@ -485,20 +484,20 @@ footer.bg-dark {
             transform: scale(1.15);
         }
 
-        .badge-return-requested {
-            background:#fdf4ff;
-            color: #6b21a8;
-        }
+.badge-return-requested {
+    background: #fdf4ff;
+    color: #6b21a8;
+}
 
 .badge-return-shipped {
     background: #eff6ff;
     color: #1e40af;
 }
+
 .badge-return-delivered {
     background: #f0fdf4;
     color: #166534;
 }
-
 
 /* ============================================== */
 /* ==== ADMIN DASHBOARD STYLES (REFINED) ======== */
@@ -697,39 +696,6 @@ body {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-/* Badges */
-.badge {
-    padding: 0;
-    border-radius: 0;
-    background-color: transparent !important;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    text-shadow: none;
-}
-
-    /* Status-specific Text Colors */
-    .badge.text-warning {
-        color: #ff8c00 !important;
-    }
-
-    .badge.text-success {
-        color: #008000 !important;
-    }
-
-    .badge.text-info {
-        color: #007bff !important;
-    }
-
-    .badge.text-danger {
-        color: #dc3545 !important;
-    }
-
-    .badge.text-secondary {
-        color: #6c757d !important;
-    }
-
 
 /* Responsive Offcanvas Sidebar Styling */
 @media (max-width: 991.98px) {
@@ -741,4 +707,3 @@ body {
     .d-lg-block {
         display: none !important; /* Hide the fixed sidebar on smaller screens */
     }
-}

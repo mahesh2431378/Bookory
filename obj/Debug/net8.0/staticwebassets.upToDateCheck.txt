@@ -1,4 +1,3 @@
-wwwroot\css\site.css
 wwwroot\images\10a27e18-8b10-4c23-9828-8f53bf252331.webp
 wwwroot\images\5a1e1a79-77a4-48f6-b444-bb7d9c597346.jpg
 wwwroot\images\a0067e86-2edd-4db7-982a-e329ea706fea.jpg
@@ -18,3 +17,4 @@ wwwroot\images\login-bg.png
 wwwroot\images\logo-bookory.svg
 wwwroot\images\payment method.jpg
 wwwroot\images\upi.png
+wwwroot\css\site.css

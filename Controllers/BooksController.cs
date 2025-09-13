@@ -151,7 +151,7 @@ namespace BookStoreMVC.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "ADMIN")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Price,CategoryId,StockQuantity,ImageUrl")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Price,CategoryId,StockQuantity,ImageUrl")] Book book, IFormFile? file)
         {
             if (id != book.Id)
             {
@@ -160,8 +160,38 @@ namespace BookStoreMVC.Controllers
 
             if (ModelState.IsValid)
             {
+                // Check if a new file was uploaded
+                if (file != null)
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+
+                    // --- Delete the old image ---
+                    if (!string.IsNullOrEmpty(book.ImageUrl))
+                    {
+                        var oldImagePath = Path.Combine(wwwRootPath, book.ImageUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+
+                    // --- Save the new image ---
+                    string fileName = Guid.NewGuid().ToString();
+                    var uploads = Path.Combine(wwwRootPath, @"images");
+                    var extension = Path.GetExtension(file.FileName);
+
+                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStreams);
+                    }
+
+                    // Update the book's ImageUrl with the new path
+                    book.ImageUrl = @"/images/" + fileName + extension;
+                }
+
                 try
                 {
+                    // Use your service to update the book in the database
                     await _bookService.UpdateAsync(book);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -181,7 +211,6 @@ namespace BookStoreMVC.Controllers
             ViewBag.Categories = _context.Categories.ToList();
             return View(book);
         }
-
         // GET: Books/Delete/5
         [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> Delete(int? id)

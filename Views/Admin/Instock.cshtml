@@ -1,0 +1,42 @@
+﻿@model IEnumerable<BookStoreMVC.Models.Book>
+
+@{
+
+    ViewData["Title"] = "Instock";
+
+    // Use admin layout for this page
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+}
+
+<h2 class="mb-3">Instock</h2>
+
+<div class="table-responsive card p-2 p-md-3 product-card">
+    <table class="table align-middle mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Price</th>
+                <th>CategoryId</th>
+                <th>StockQuantity</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var book in Model)
+
+            {
+                <tr>
+                    <td>@book.Id</td>
+                    <td>@book.Title</td>
+                    <td>@book.Price</td>
+                    <td>@book.CategoryId</td>
+                    <td>@book.StockQuantity</td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>

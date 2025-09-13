@@ -1,7 +1,7 @@
+using BookStoreMVC.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BookStoreMVC.Models;
 using System.Linq;
 
 namespace BookStoreMVC.Controllers
@@ -40,15 +40,31 @@ namespace BookStoreMVC.Controllers
             // Subtract the cancelled sales from the total completed sales
             ViewBag.TotalSales = totalCompletedSales - cancelledSales;
 
+            var instock = await _context.Books
+                                     .Where(b => b.StockQuantity > 0)
+                                     .CountAsync();
+
+            // Get the sum of all payments for cancelled orders
+            // Assuming your Payment entity has a navigation property or foreign key to an Order entity
+            // Get the sum of all payments for cancelled orders
+            var outofstock = await _context.Books
+                                     .Where(b => b.StockQuantity == 0)
+                                     .CountAsync();
+
+            // Subtract the cancelled sales from the total completed sales
+            ViewBag.Totaloutofstock = outofstock;
+            ViewBag.Totalinstock = instock;
+
             // --- Part 2: Fetch recent orders to display on the dashboard ---
             // This feature is from the second code and makes the dashboard much more useful.
             // We use .Take(20) as a best practice to avoid loading thousands of orders.
             var recentOrders = await _context.Orders
                 .Include(o => o.User)
+                .Include(o => o.Payment) // Added to load payment details
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Book)
                 .OrderByDescending(o => o.OrderDate)
-                .Take(20) // Fetch the 20 most recent orders
+                .Take(5)
                 .ToListAsync();
 
             // Return the view with the list of recent orders as the model
@@ -63,6 +79,21 @@ namespace BookStoreMVC.Controllers
                                     .Where(u => u.Role == UserRole.CUSTOMER)
                                     .ToListAsync();
             return View(users);
+        }
+
+        public async Task<IActionResult> Instock()
+        {
+            var books = await _context.Books
+                                    .Where(b => b.StockQuantity > 0)
+                                    .ToListAsync();
+            return View(books);
+        }
+        public async Task<IActionResult> Outofstock()
+        {
+            var books = await _context.Books
+                                    .Where(b => b.StockQuantity == 0)
+                                    .ToListAsync();
+            return View(books);
         }
     }
 }

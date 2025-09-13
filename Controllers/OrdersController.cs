@@ -17,23 +17,26 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Orders
+        // This action lists orders. Admins see all orders; users see only their own.
         public async Task<IActionResult> Index()
         {
             IQueryable<Order> orders;
             if (User.IsInRole("ADMIN"))
             {
-                // For administrators, include user and order items to display details
+                // For administrators, include all related data for a comprehensive overview.
                 orders = _context.Orders
                     .Include(o => o.User)
+                    .Include(o => o.Payment)
                     .Include(o => o.OrderItems)
                         .ThenInclude(oi => oi.Book);
             }
             else
             {
-                // For regular users, show only their own orders
+                // For regular users, show only their own orders.
                 int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
                 orders = _context.Orders
                     .Where(o => o.UserId == userId)
+                    .Include(o => o.Payment)
                     .Include(o => o.OrderItems)
                         .ThenInclude(oi => oi.Book);
             }
@@ -42,6 +45,7 @@ namespace BookStoreMVC.Controllers
         }
 
         // GET: Orders/Details/5
+        // Shows the full details for a single order.
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -62,7 +66,7 @@ namespace BookStoreMVC.Controllers
                 return NotFound();
             }
 
-            // Ensure the user has rights to view the order
+            // Security check: Ensure a user can only view their own order unless they are an admin.
             if (!User.IsInRole("ADMIN") && order.UserId != int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!))
             {
                 return Forbid();
@@ -71,18 +75,17 @@ namespace BookStoreMVC.Controllers
             return View(order);
         }
 
-        // POST: Orders/UpdateStatus/5
         /// <summary>
         /// (Admin-only) Updates the status of an order.
-        /// If the status is set to DELIVERED, it also updates the payment status to COMPLETED.
-        /// If the status is set to CANCELLED, it returns items to stock.
+        /// - If status is set to DELIVERED, payment is marked COMPLETED.
+        /// - If status is set to CANCELLED, items are returned to stock.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "ADMIN")]
         public async Task<IActionResult> UpdateStatus(int id, OrderStatus status)
         {
-            // Eagerly load related objects to update them if necessary
+            // Eagerly load related objects to update them if necessary.
             var order = await _context.Orders
                 .Include(o => o.Payment)
                 .Include(o => o.OrderItems)
@@ -94,14 +97,23 @@ namespace BookStoreMVC.Controllers
                 return NotFound();
             }
 
-            // Store the original status to compare against the new one
-            var oldStatus = order.Status;
-
-            // Update the order's status
+            var oldStatus = order.Status; // Store original status for comparison.
             order.Status = status;
 
-            // --- NEW LOGIC: Return items to stock if order is cancelled ---
-            // This logic runs only if the status is changed TO Cancelled FROM something else.
+            // Handle status-specific side effects.
+
+            // 1. If order is delivered, complete the payment.
+            if (status == OrderStatus.DELIVERED)
+            {
+                if (order.Payment != null)
+                {
+                    // This correctly updates the status on the related Payment object.
+                    order.Payment.PaymentStatus = PaymentStatus.COMPLETED;
+                }
+            }
+
+            // 2. If order is cancelled, return items to stock.
+            // This runs only if the status changes TO Cancelled FROM something else.
             if (status == OrderStatus.CANCELLED && oldStatus != OrderStatus.CANCELLED)
             {
                 foreach (var item in order.OrderItems)
@@ -113,23 +125,13 @@ namespace BookStoreMVC.Controllers
                 }
             }
 
-            // **CRITICAL LOGIC**: If the order is delivered, complete the payment status.
-            if (status == OrderStatus.DELIVERED)
-            {
-                if (order.Payment != null)
-                {
-                    order.Payment.PaymentStatus = PaymentStatus.COMPLETED;
-                }
-            }
-
             _context.Update(order);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { id });
         }
 
         /// <summary>
-        /// Customer-initiated request to return a delivered order.
-        /// Only orders with status DELIVERED can be returned.
+        /// (Customer-facing) Request to return a delivered order.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -141,6 +143,7 @@ namespace BookStoreMVC.Controllers
             if (order == null)
                 return NotFound();
 
+            // A return can only be requested for a delivered order.
             if (order.Status != OrderStatus.DELIVERED)
                 return RedirectToAction(nameof(Details), new { id });
 
@@ -152,16 +155,16 @@ namespace BookStoreMVC.Controllers
         }
 
         /// <summary>
-        /// Customer-initiated cancellation of an order.  
-        /// Cancels only if the order isn’t already delivered, cancelled or in the return process.
-        /// When cancelled, returns items to stock.
+        /// (Customer-facing) Cancels an order and returns items to stock.
+        /// Cancellation is only allowed if the order is not yet delivered or in the return process.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            // Must include OrderItems and Books to update stock quantity
+
+            // Must include OrderItems and Books to update stock quantity.
             var order = await _context.Orders
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Book)
@@ -170,18 +173,20 @@ namespace BookStoreMVC.Controllers
             if (order == null)
                 return NotFound();
 
-            // Check if the order is in a state that allows cancellation
-            if (order.Status == OrderStatus.DELIVERED ||
-                order.Status == OrderStatus.CANCELLED ||
-                order.Status == OrderStatus.RETURN_REQUESTED ||
-                order.Status == OrderStatus.RETURN_SHIPPED ||
-                order.Status == OrderStatus.RETURN_DELIVERED)
+            // Define statuses that cannot be cancelled by the user.
+            var cancellable = order.Status != OrderStatus.DELIVERED &&
+                              order.Status != OrderStatus.CANCELLED &&
+                              order.Status != OrderStatus.RETURN_REQUESTED &&
+                              order.Status != OrderStatus.RETURN_SHIPPED &&
+                              order.Status != OrderStatus.RETURN_DELIVERED;
+
+            if (!cancellable)
             {
+                // If not cancellable, just show the details page without making changes.
                 return RedirectToAction(nameof(Details), new { id });
             }
 
-            // --- NEW LOGIC: Return items to stock if order is cancelled ---
-            // The check above ensures we don't re-add stock for an already cancelled order.
+            // Return items to stock.
             foreach (var item in order.OrderItems)
             {
                 if (item.Book != null)

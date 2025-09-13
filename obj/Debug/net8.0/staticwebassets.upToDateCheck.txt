@@ -1,14 +1,15 @@
-wwwroot\css\admindashboard.css
 wwwroot\css\site.css
 wwwroot\images\10a27e18-8b10-4c23-9828-8f53bf252331.webp
+wwwroot\images\5a1e1a79-77a4-48f6-b444-bb7d9c597346.jpg
+wwwroot\images\a0067e86-2edd-4db7-982a-e329ea706fea.jpg
 wwwroot\images\books\2bb79c1a-0027-4a9c-a1d0-a855a5da9281_bookshelf.png
 wwwroot\images\books\fcf8302f-6d80-4eb5-b889-70787b02f3b2_jpeg.jpg
 wwwroot\images\brief_history_of_time.jpg
+wwwroot\images\c5ce0eee-1cc2-4f25-a4bb-02b4f2096528.jpg
 wwwroot\images\checkout-bg.png
 wwwroot\images\clean_code.jpg
 wwwroot\images\cod.jpg
 wwwroot\images\credit card.jpg
-wwwroot\images\default-book.png
 wwwroot\images\dummy-qr.jpg
 wwwroot\images\favicon.png
 wwwroot\images\great_gatsby.jpg
@@ -17,5 +18,3 @@ wwwroot\images\login-bg.png
 wwwroot\images\logo-bookory.svg
 wwwroot\images\payment method.jpg
 wwwroot\images\upi.png
-wwwroot\images\5a1e1a79-77a4-48f6-b444-bb7d9c597346.jpg
-wwwroot\images\a0067e86-2edd-4db7-982a-e329ea706fea.jpg

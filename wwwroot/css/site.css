@@ -28,6 +28,7 @@
     --shadow: 0 6px 24px rgba(0, 0, 0, .08);
     /* ENHANCEMENT: Central variable for consistent animation speed. */
     --transition-speed: 0.2s ease-in-out;
+
 }
 
 /* Base styles */
@@ -499,4 +500,245 @@ footer.bg-dark {
 }
 
 
+/* ============================================== */
+/* ==== ADMIN DASHBOARD STYLES (REFINED) ======== */
+/* ============================================== */
+/* General Body/Layout Styling */
+body {
+    background-color: #f0f4f9;
+    font-family: 'Inter', sans-serif;
+    color: #2c3e50;
+}
 
+/* Main Layout Wrapper - CSS Grid */
+.admin-dashboard-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    min-height: calc(100vh - 8rem); /* Adjust height to accommodate nav/footer */
+}
+
+/* Sidebar and its Scrolling Wrapper */
+.admin-sidebar-wrapper {
+    position: sticky;
+    top: 1.5rem;
+    height: calc(100vh - 3rem);
+    overflow-y: auto;
+}
+
+.admin-sidebar {
+    background-color: #ffffff;
+    border-right: 1px solid #e0e6ed;
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+    .admin-sidebar a div {
+        height: 3.5rem;
+        width: 100%;
+        border-radius: 10px;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        padding: 0 1.5rem;
+        font-weight: 600;
+        color: #6c7a89;
+    }
+
+        .admin-sidebar a div:hover {
+            background: linear-gradient(90deg, #ff8c42, #ff6600);
+            color: #ffffff !important;
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 20px rgba(255, 102, 0, 0.2);
+        }
+
+    .admin-sidebar a {
+        text-decoration: none;
+    }
+
+/* Main Content Area */
+.admin-main-content {
+    padding: 2rem;
+}
+
+/* Dashboard Cards Container (Responsive Grid) */
+.dashboard-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    text-decoration: none;
+    height: 100%;
+    border: none;
+    overflow: hidden;
+    position: relative;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    color: #ffffff;
+}
+
+    .dashboard-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .dashboard-card .icon {
+        font-size: 3rem;
+        line-height: 1;
+        opacity: 0.9;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .dashboard-card .info .value {
+        font-size: 2.25rem;
+        font-weight: 900;
+        line-height: 1.1;
+        letter-spacing: -1px;
+    }
+
+    .dashboard-card .info .label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        opacity: 0.8;
+        margin-top: 0.25rem;
+    }
+
+    /* Card-specific Gradient Backgrounds */
+    .dashboard-card.users {
+        background: linear-gradient(45deg, #42a5f5, #2196f3);
+    }
+
+    .dashboard-card.books {
+        background: linear-gradient(45deg, #7e57c2, #5e35b1);
+    }
+
+    .dashboard-card.orders {
+        background: linear-gradient(45deg, #ffc107, #ff9800);
+    }
+
+    .dashboard-card.sales {
+        background: linear-gradient(45deg, #66bb6a, #4caf50);
+    }
+
+    .dashboard-card.In-Stock {
+        background: linear-gradient(45deg, #4dd0e1, #00acc1);
+    }
+
+    .dashboard-card.Out-of-stock {
+        background: linear-gradient(45deg, #ef5350, #e53935);
+    }
+
+/* Recent Orders Table Styling */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+    .card .card-title {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e0e6ed;
+        background-color: #f8f9fa;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .card h3 {
+        margin-bottom: 0;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #34495e;
+    }
+
+.table-responsive {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    overflow: hidden;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+    .table thead th {
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.8rem;
+        color: #8c93a0;
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #e0e6ed;
+    }
+
+    .table tbody tr {
+        background-color: #ffffff;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    }
+
+        .table tbody tr:hover {
+            background-color: #fafbfb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+/* Badges */
+.badge {
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent !important;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: none;
+}
+
+    /* Status-specific Text Colors */
+    .badge.text-warning {
+        color: #ff8c00 !important;
+    }
+
+    .badge.text-success {
+        color: #008000 !important;
+    }
+
+    .badge.text-info {
+        color: #007bff !important;
+    }
+
+    .badge.text-danger {
+        color: #dc3545 !important;
+    }
+
+    .badge.text-secondary {
+        color: #6c757d !important;
+    }
+
+
+/* Responsive Offcanvas Sidebar Styling */
+@media (max-width: 991.98px) {
+    .admin-dashboard-container {
+        grid-template-columns: 1fr; /* On mobile, the main content takes the full width */
+        gap: 0;
+    }
+
+    .d-lg-block {
+        display: none !important; /* Hide the fixed sidebar on smaller screens */
+    }
+}

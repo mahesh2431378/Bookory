@@ -1,152 +1,170 @@
 @model IEnumerable<BookStoreMVC.Models.Order>
-
 @{
-
     ViewData["Title"] = "Dashboard";
-
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-
     // Get the most recent order from the ViewBag
-
-    var firstOrder = ViewBag.MostRecentOrder as BookStoreMVC.Models.Order;
-
+    var firstOrder = ViewBag.MostRecentOrder as BookStoreMVC.Models.Payment;
+    string FormatStatus(string status)
+    {
+        // Replace underscores with spaces (e.g., "RETURN_REQUESTED" -> "RETURN REQUESTED")
+        var withSpaces = status.Replace("_", " ");
+        // Change to "Title Case" so the first letter of each word is capitalized (e.g., "return requested" -> "Return Requested")
+        return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(withSpaces.ToLower());
+    }
 }
-
-<div class="page-header">
-    <h1>Admin Dashboard</h1>
-</div>
-
-<div class="row g-4 mb-5">
-    <div class="col-lg-3 col-md-6">
-        <div class="dashboard-card stat-card users">
-            <i class="bi bi-people-fill icon"></i>
-            <div class="info">
-                <div class="value">@ViewBag.TotalUsers</div>
-                <div class="label">Customers</div>
-            </div>
+<div class="d-flex h-100 w-100">
+    <!-- Sidebar Menu -->
+    <div class="admin-sidebar d-flex flex-column gap-2 p-1 position-sticky" style="width: 30vw; height: 100%; top: 5%; background-color: #fff;">
+        <div>
+            <a asp-controller="Books" asp-action="Index" style="text-decoration: none; color: orange;">
+                <div style="height: 3rem; width: 100%; border-radius: 12px; border: 2px solid #ffffff55;" class="d-flex align-items-center justify-content-around px-2"><i class="bi bi-journal-richtext"></i>MANAGE BOOKS</div>
+            </a>
+        </div>
+        <div>
+            <a asp-controller="Orders" asp-action="Index" style="text-decoration: none; color: orange;">
+                <div style="height: 3rem; width: 100%; border-radius: 12px; border: 2px solid #ffffff55;" class="d-flex align-items-center justify-content-around px-2"><i class="bi bi-receipt"></i>MANAGE ORDERS</div>
+            </a>
+        </div>
+        <div>
+            <a asp-controller="Admin" asp-action="Users" style="text-decoration: none; color: orange;">
+                <div style="height: 3rem; width: 100%; border-radius: 12px; border: 2px solid #ffffff55;" class="d-flex align-items-center justify-content-around px-2"><i class="bi bi-person-gear"></i>CUSTOMER DETAILS</div>
+            </a>
+        </div>
+        <div>
+            <a asp-controller="Admin" asp-action="Instock" style="text-decoration: none; color: orange;">
+                <div style="height: 3rem; width: 100%; border-radius: 12px; border: 2px solid #ffffff55;" class="d-flex align-items-center justify-content-around px-2"><i class="bi bi-receipt"></i>IN-STOCK DETAILS</div>
+            </a>
+        </div>
+        <div>
+            <a asp-controller="Admin" asp-action="Outofstock" style="text-decoration: none; color: orange;">
+                <div style="height: 3rem; width: 100%; border-radius: 12px; border: 2px solid #ffffff55;" class="d-flex align-items-center justify-content-around px-2"><i class="bi bi-receipt"></i>OUT-OF-STOCK DETAILS</div>
+            </a>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6">
-        <div class="dashboard-card stat-card books">
-            <i class="bi bi-book-half icon"></i>
-            <div class="info">
-                <div class="value">@ViewBag.TotalBooks</div>
-                <div class="label">Books</div>
+
+    <!-- Main Dashboard Content -->
+    <div style="flex-grow: 1; padding: 1.5rem; overflow-y: auto;">
+        <div>
+            <h1>Admin Dashboard</h1>
+        </div>
+        <div class="d-flex flex-wrap gap-3">
+            <div style="flex-grow:1;">
+                <div class="dashboard-card stat-card users">
+                    <i class="bi bi-people-fill icon"></i>
+                    <div class="info">
+                        <div class="value">@ViewBag.TotalUsers</div>
+                        <div class="label">Customers</div>
+                    </div>
+                </div>
+            </div>
+            <div style="flex-grow:1;">
+                <div class="dashboard-card stat-card books">
+                    <i class="bi bi-book-half icon"></i>
+                    <div class="info">
+                        <div class="value">@ViewBag.TotalBooks</div>
+                        <div class="label">Books</div>
+                    </div>
+                </div>
+            </div>
+            <div style="flex-grow:1;">
+                <div class="dashboard-card stat-card orders">
+                    <i class="bi bi-box-seam-fill icon"></i>
+                    <div class="info">
+                        <div class="value">@ViewBag.TotalOrders</div>
+                        <div class="label">Orders</div>
+                    </div>
+                </div>
+            </div>
+            <div style="flex-grow:1;">
+                <div class="dashboard-card stat-card sales">
+                    <i class="bi bi-cash-stack icon"></i>
+                    <div class="info">
+                        <div class="value">₹@(((decimal)ViewBag.TotalSales).ToString("N0"))</div>
+                        <div class="label">Sales</div>
+                    </div>
+                </div>
+            </div>
+            <div style="flex-grow:1;">
+                <div class="dashboard-card stat-card In-Stock">
+                    <i class="bi bi-box-seam-fill icon"></i>
+                    <div class="info">
+                        <div class="value">@ViewBag.Totalinstock</div>
+                        <div class="label">In-Stock</div>
+                    </div>
+                </div>
+            </div>
+            <div style="flex-grow:1;">
+                <div class="dashboard-card stat-card Out-of-stock">
+                    <i class="bi bi-box-seam-fill icon"></i>
+                    <div class="info">
+                        <div class="value">@ViewBag.Totaloutofstock</div>
+                        <div class="label">Out-of-stock</div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-        <div class="dashboard-card stat-card orders">
-            <i class="bi bi-box-seam-fill icon"></i>
-            <div class="info">
-                <div class="value">@ViewBag.TotalOrders</div>
-                <div class="label">Orders</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-        <div class="dashboard-card stat-card sales">
-            <i class="bi bi-cash-stack icon"></i>
-            <div class="info">
-                <div class="value">₹@(((decimal)ViewBag.TotalSales).ToString("N0"))</div>
-                <div class="label">Sales</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row g-4">
-    <div class="col-md-4">
-        <a class="dashboard-card management-card" asp-controller="Books" asp-action="Index">
-            <div class="card-title"><i class="bi bi-journal-richtext"></i>Manage Books</div>
-        </a>
-    </div>
-    <div class="col-md-4">
-        <a class="dashboard-card management-card" asp-controller="Orders" asp-action="Index">
-            <div class="card-title"><i class="bi bi-receipt"></i>Manage Orders</div>
-        </a>
-    </div>
-    <div class="col-md-4">
-        <a class="dashboard-card management-card" asp-controller="Admin" asp-action="Users">
-            <div class="card-title"><i class="bi bi-person-gear"></i>Customer Details</div>
-        </a>
-    </div>
-</div>
-
-<div class="row g-4 mt-5">
-    <div class="col-12">
-        <div class="card p-3 shadow-sm">
-            <div class="card-title d-flex justify-content-between align-items-center">
-                <h3><i class="bi bi-clock-history"></i> Recent Orders</h3>
-                <a asp-controller="Orders" asp-action="Index" class="btn btn-outline-primary btn-sm">View All</a>
-            </div>
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Order</th>
-                            <th>User</th>
-                            <th class="text-center">Items</th>
-                            <th class="text-end">Total</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-end">Placed</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        @if (Model != null && Model.Any())
-
-                        {
-
-                            @foreach (var o in ((IEnumerable<BookStoreMVC.Models.Order>)Model).OrderByDescending(o => o.OrderDate).Take(5))
-
-                            {
+        <div class="row g-4 mt-5">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-title d-flex justify-content-between align-items-center">
+                        <h3><i class="bi bi-clock-history"></i> Recent Orders</h3>
+                        <a asp-controller="Orders" asp-action="Index" class="btn btn-outline-primary btn-sm">View All</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <td><strong>#@o.Id</strong></td>
-                                    <td>@o.User?.Username</td>
-                                    <td class="text-center">@o.OrderItems.Count</td>
-                                    <td class="text-end">₹@o.TotalAmount.ToString("0.00")</td>
-                                    <td class="text-center">
-                                        <span class="badge @(o.Status == OrderStatus.PENDING ? "text-warning" :
-
-                                              o.Status == OrderStatus.SHIPPED ? "text-info" :
-
-                                              o.Status == OrderStatus.DELIVERED ? "text-success" :
-
-                                              o.Status == OrderStatus.CANCELLED ? "text-danger" :
-
-                                              "text-secondary")">
-
-                                    @o.Status.ToString().Replace("_", " ")
-                                </span>
-                            </td>
-                            <td class="text-end">@o.OrderDate.ToString("yyyy-MM-dd")</td>
-
-                                    @* <td class="text-end">
-<a class="btn btn-outline-primary btn-sm btn-rounded"
-
-                                   asp-controller="Orders" asp-action="Details" asp-route-id="@o.Id">
-
-                                    View
-</a>
-</td> *@
+                                    <th>Order</th>
+                                    <th>User</th>
+                                    <th class="text-center">Items</th>
+                                    <th class="text-end">Total</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Payment Mode</th>
+                                    <th class="text-center">Payment status</th>
+                                    <th class="text-end">Placed</th>
+                                    <th></th>
                                 </tr>
-
-                                                }
-
-                        }
-
-                        else
-
-                        {
-                            <tr>
-                                <td colspan="7" class="text-center text-muted">No recent orders to display.</td>
-                            </tr>
-
-                        }
-                    </tbody>
-                </table>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var o in ((IEnumerable<BookStoreMVC.Models.Order>)Model).OrderByDescending(o => o.OrderDate).Take(5))
+                                    {
+                                        <tr>
+                                            <td><strong>#@o.Id</strong></td>
+                                            <td>@o.User?.Username</td>
+                                            <td class="text-center">@o.OrderItems.Count</td>
+                                            <td class="text-end">₹@o.TotalAmount.ToString("0.00")</td>
+                                            <td class="text-center">
+                                                <span class="badge @(o.Status == OrderStatus.PENDING ? "text-warning" :
+                                                                                                                                                              o.Status == OrderStatus.SHIPPED ? "text-info" :
+                                                                                                                                                              o.Status == OrderStatus.DELIVERED ? "text-success" :
+                                                                                                                                                              o.Status == OrderStatus.CANCELLED ? "text-danger" :
+                                                                                                                                                              "text-secondary")">
+                                            @o.Status.ToString().Replace("_", " ")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">@o.Payment?.PaymentMethod</td>
+                                    <td class="text-center">
+                                        <span class="badge @(o.Payment?.PaymentStatus == PaymentStatus.COMPLETED ? "text-success" : o.Payment?.PaymentStatus == PaymentStatus.PENDING ? "text-warning" : "text-secondary")">
+                                            @o.Payment?.PaymentStatus
+                                        </span>
+                                    </td>
+                                    <td class="text-end">@o.OrderDate.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                                                                }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">No recent orders to display.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

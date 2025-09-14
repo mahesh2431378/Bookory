@@ -1,6 +1,7 @@
+using BookStoreMVC.Models;
+using BookStoreMVC.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using BookStoreMVC.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddControllersWithViews();
 
 // Register IHttpContextAccessor for injecting HttpContext into views (e.g. _Layout)
 builder.Services.AddHttpContextAccessor();
+// Add this line in Program.cs
+builder.Services.AddScoped<IWishlistService, WishlistService>();
 
 // Configure Entity Framework Core with SQLite for local development. If needed, replace with SQL Server.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

@@ -517,21 +517,22 @@ body {
     min-height: calc(100vh - 8rem); /* Adjust height to accommodate nav/footer */
 }
 
-/* Sidebar and its Scrolling Wrapper */
-.admin-sidebar-wrapper {
+/* Full-Height Sidebar Menu */
+.admin-sidebar {
     position: sticky;
-    top: 1.5rem;
-    height: calc(100vh - 3rem);
+    top: 0;
+    height: 100vh;
     overflow-y: auto;
+    background-color: #ffffff;
+    padding: 1.5rem 1rem;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05); /* Subtle shadow on the right edge */
+    border-right: 1px solid #e0e6ed; /* Main border for separation */
 }
 
-.admin-sidebar {
-    background-color: #ffffff;
-    border-right: 1px solid #e0e6ed;
-    padding: 1.5rem 1rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-}
+    /* Styling for the navigation links */
+    .admin-sidebar a {
+        text-decoration: none;
+    }
 
     .admin-sidebar a div {
         height: 3.5rem;
@@ -546,16 +547,13 @@ body {
         color: #6c7a89;
     }
 
+        /* Hover state for the navigation links */
         .admin-sidebar a div:hover {
             background: linear-gradient(90deg, #ff8c42, #ff6600);
             color: #ffffff !important;
             transform: translateY(-2px) scale(1.01);
             box-shadow: 0 8px 20px rgba(255, 102, 0, 0.2);
         }
-
-    .admin-sidebar a {
-        text-decoration: none;
-    }
 
 /* Main Content Area */
 .admin-main-content {
@@ -671,6 +669,7 @@ body {
 .table {
     border-collapse: separate;
     border-spacing: 0 10px;
+    width: 100%; /* Ensure the table uses all available width */
 }
 
     .table thead th {
@@ -681,6 +680,12 @@ body {
         color: #8c93a0;
         background-color: #f8f9fa;
         border-bottom: 2px solid #e0e6ed;
+        white-space: nowrap; /* Prevents text from wrapping */
+    }
+
+    .table tbody td {
+        white-space: nowrap; /* Prevents text from wrapping */
+        padding: 1rem 0.5rem; /* Add some padding for better spacing */
     }
 
     .table tbody tr {

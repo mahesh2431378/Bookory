@@ -1,0 +1,62 @@
+﻿@model List<BookStoreMVC.Models.WishlistItem>
+@{
+    ViewData["Title"] = "My Wishlist";
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">My Wishlist ❤️</h1>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <h4>Your wishlist is empty.</h4>
+            <p class="text-muted">Add books to your wishlist to see them here.</p>
+            <a asp-controller="Books" asp-action="Index" class="btn btn-primary mt-2">Find Your Next Read</a>
+        </div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var item in Model)
+            {
+                <div class="list-group-item list-group-item-action d-flex align-items-center">
+                    <img src="@(string.IsNullOrWhiteSpace(item.Book.ImageUrl) ? Url.Content("~/images/default-book.png") : item.Book.ImageUrl)"
+                         alt="@item.Book.Title"
+                         style="width: 60px; height: 80px; object-fit: cover; margin-right: 15px;"
+                         class="rounded" />
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1">@item.Book.Title</h5>
+                        <p class="mb-1 text-muted">@item.Book.Category?.Name</p>
+                        <strong class="text-primary">₹@item.Book.Price.ToString("0.00")</strong>
+                    </div>
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        @if (item.Book.StockQuantity > 0)
+                        {
+                            <a class="btn btn-sm btn-primary" asp-controller="Cart" asp-action="Add" asp-route-bookId="@item.Book.Id" asp-route-goToCart="true">
+                                <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                            </a>
+                        }
+                        <form asp-controller="Wishlist" asp-action="Remove" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                <i class="bi bi-trash me-1"></i> Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-center mt-4">
+            <a asp-controller="Books" asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Back to Shop
+            </a>
+        </div>
+    }
+</div>

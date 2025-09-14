@@ -17,6 +17,8 @@ namespace BookStoreMVC.Models
         public DbSet<OrderItem> OrderItems { get; set; } = default!;
         public DbSet<Payment> Payments { get; set; } = default!;
 
+        public DbSet<WishlistItem> WishlistItems { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

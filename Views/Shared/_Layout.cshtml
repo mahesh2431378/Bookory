@@ -15,7 +15,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" asp-controller="" asp-action="">
+            <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
                 <img src="~/images/logo-bookory.svg" alt="BOOKORY" height="28" class="me-2" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
@@ -23,8 +23,6 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div id="mainNav" class="collapse navbar-collapse">
-
-                @* ==================== UPDATED NAVIGATION BLOCK START ==================== *@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     @if (User.Identity?.IsAuthenticated == true && User.IsInRole("ADMIN"))
                     {
@@ -42,26 +40,30 @@
                         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="AboutUs">About </a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact </a></li>
 
-
                         @if (User.Identity?.IsAuthenticated == true)
                         {
                             <li class="nav-item"><a class="nav-link" asp-controller="Orders" asp-action="Index">Orders</a></li>
                         }
                     }
                 </ul>
-                @* ==================== UPDATED NAVIGATION BLOCK END ==================== *@
 
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     @if (User?.Identity?.IsAuthenticated ?? false)
                     {
-                        // Display the current username in the navigation bar
                         var uname = User?.FindFirst("Username")?.Value ?? User?.Identity?.Name ?? "Account";
 
-                        // Show cart link for all authenticated users who are NOT admins
+                        // Show wishlist and cart links for users who are NOT admins
                         if (!User.IsInRole("ADMIN"))
                         {
                             <li class="nav-item">
-                                <a asp-controller="Cart" asp-action="Index" class="nav-link"><i class="bi bi-bag"></i> Cart</a>
+                                <a class="nav-link" asp-controller="Wishlist" asp-action="Index" title="My Wishlist">
+                                    <i class="bi bi-heart-fill fs-5"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Cart" asp-action="Index" title="My Cart">
+                                    <i class="bi bi-cart-fill fs-5"></i>
+                                </a>
                             </li>
                         }
 
@@ -92,7 +94,6 @@
     <footer class="footer-section bg-dark text-white pt-5 pb-4">
         <div class="container">
             <div class="row">
-
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                     <h5 class="text-uppercase mb-3">Bookory</h5>
                     <p class="text-white-50">
@@ -138,7 +139,6 @@
                         </div>
                     </form>
                 </div>
-
             </div>
 
             <div class="row mt-5">
@@ -147,7 +147,6 @@
                     <a href="#" class="social-icon mx-2"><i class="bi bi-twitter-x"></i></a>
                     <a href="#" class="social-icon mx-2"><i class="bi bi-instagram"></i></a>
                     <a href="#" class="social-icon mx-2"><i class="bi bi-linkedin"></i></a>
-
                 </div>
             </div>
 

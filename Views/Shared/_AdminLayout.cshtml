@@ -34,22 +34,30 @@
                 {
                     var uname = User?.FindFirst("Username")?.Value ?? User?.Identity?.Name ?? "Admin";
                     <!-- display username in dropdown with logout link -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="adminUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle me-1"></i><span>@uname</span>
-                        </a>
-                        <ul class="dropdown-menu MX-auto" aria-labelledby="adminUserDropdown">
-
-                            <li><a class="dropdown-item px-2 py-1" asp-controller="Books" asp-action="Index">Manage Books </a></li>
-                            <li><a class="dropdown-item px-2 py-1" asp-controller="Orders" asp-action="Index">Manage Orders</a></li>
-                            <li><a class="dropdown-item px-2 py-1" asp-controller="Admin" asp-action="Users">Customer Details</a></li>
-                            <li><a class="dropdown-item px-2 py-1" asp-controller="Admin" asp-action="Instock">In-Stock Details</a></li>
-                            <li><a class="dropdown-item px-2 py-1" asp-controller="Admin" asp-action="Outofstock">Out-Of-Stock Details</a></li>
-
-                            <li><a class="dropdown-item px-2 py-1" asp-controller="Account" asp-action="Logout">Logout</a></li>
-                        </ul>
-
-                    </li>
+                    <nav class="navbar navbar-expand-lg">
+                        <div class="container-fluid">
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+                                <ul class="navbar-nav ms-auto">
+                                    <li class="nav-item dropdown position-relative">
+                                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="adminUserDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-person-circle me-1"></i><span>@uname</span>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-end" style="width: fit-content;" aria-labelledby="adminUserDropdown">
+                                            <li><a class="dropdown-item px-2 py-1" asp-controller="Books" asp-action="Index"><i class="bi bi-journal-richtext px-2"></i>Manage Books </a></li>
+                                            <li><a class="dropdown-item px-2 py-1" asp-controller="Orders" asp-action="Index"><i class="bi bi-receipt px-2"></i>Manage Orders</a></li>
+                                            <li><a class="dropdown-item px-2 py-1" asp-controller="Admin" asp-action="Users"><i class="bi bi-person-gear px-2"></i>Customer Details</a></li>
+                                            <li><a class="dropdown-item px-2 py-1" asp-controller="Admin" asp-action="Instock"><i class="bi bi-cart-check px-2"></i>In-Stock Details</a></li>
+                                            <li><a class="dropdown-item px-2 py-1" asp-controller="Admin" asp-action="Outofstock"><i class="bi bi-cart-x px-2"></i>Out-Of-Stock Details</a></li>
+                                            <li><a class="dropdown-item px-2 py-1" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-left px-2"></i>Logout</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
                 }
                 else
                 {

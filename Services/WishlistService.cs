@@ -14,7 +14,12 @@ namespace BookStoreMVC.Services
         {
             _context = context;
         }
-
+        public async Task<int> GetWishlistCountAsync(int userId)
+        {
+            return await _context.WishlistItems
+                                 .Where(w => w.UserId == userId)
+                                 .CountAsync();
+        }
         public async Task<List<WishlistItem>> GetWishlistItemsAsync(int userId)
         {
             return await _context.WishlistItems

@@ -180,7 +180,35 @@ namespace BookStoreMVC.Controllers
             ViewBag.Ok = ok;
             return View(order);
         }
+
+        // Added Getcount
+        [HttpGet]
+
+        public async Task<IActionResult> GetCount()
+
+        {
+
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdClaim))
+
+            {
+
+                return Json(new { count = 0 });
+
+            }
+
+            int userId = int.Parse(userIdClaim);
+
+            var count = await _cartService.GetCartCountAsync(userId); // Assuming you have this method
+
+            return Json(new { count = count });
+
+        }
+
+
     }
+
 
     /// <summary>
     /// View model used for collecting shipping and contact details during checkout.

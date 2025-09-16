@@ -55,14 +55,16 @@
                         // Show wishlist and cart links for users who are NOT admins
                         if (!User.IsInRole("ADMIN"))
                         {
-                            <li class="nav-item">
+                            <li class="nav-item position-relative">
                                 <a class="nav-link" asp-controller="Wishlist" asp-action="Index" title="My Wishlist">
                                     <i class="bi bi-heart-fill fs-5"></i>
+                                    <span id="wishlist-count" class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle d-none"></span>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item position-relative">
                                 <a class="nav-link" asp-controller="Cart" asp-action="Index" title="My Cart">
                                     <i class="bi bi-cart-fill fs-5"></i>
+                                    <span id="cart-count" class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle d-none"></span>
                                 </a>
                             </li>
                         }
@@ -72,8 +74,8 @@
                                 <i class="bi bi-person-circle me-1"></i><span>@uname</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Profile</a></li>
-                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="bi bi-person-circle pe-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-left pe-2"></i>Logout</a></li>
                             </ul>
                         </li>
                     }
@@ -105,9 +107,9 @@
                     <h5 class="text-uppercase mb-3">Quick Links</h5>
                     <ul class="list-unstyled footer-links ">
                         <li><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-white">Home</a></li>
-                        <li><a asp-controller="Books" asp-action="Index" class="text-decoration-none  text-white">Shop</a></li>
-                        <li><a asp-controller="Home" asp-action="AboutUs" class="text-decoration-none  text-white">About</a></li>
-                        <li><a asp-controller="Home" asp-action="ContactUs" class="text-decoration-none  text-white">Contact</a></li>
+                        <li><a asp-controller="Books" asp-action="Index" class="text-decoration-none text-white">Shop</a></li>
+                        <li><a asp-controller="Home" asp-action="AboutUs" class="text-decoration-none text-white">About</a></li>
+                        <li><a asp-controller="Home" asp-action="ContactUs" class="text-decoration-none text-white">Contact</a></li>
                     </ul>
                 </div>
 
@@ -158,8 +160,61 @@
         </div>
     </footer>
 
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
+    @if (User?.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const countBadge = document.getElementById('wishlist-count');
+
+                // Fetch the count from your new API endpoint
+                fetch('/Wishlist/GetCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.count > 0) {
+                            countBadge.textContent = data.count;
+                            countBadge.classList.remove('d-none'); // Show the badge
+                        }
+                    })
+                    .catch(error => console.error('Error fetching wishlist count:', error));
+            });
+        </script>
+    }
+    @if (User?.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const wishlistCountBadge = document.getElementById('wishlist-count');
+                const cartCountBadge = document.getElementById('cart-count');
+
+                // Fetch wishlist count
+                fetch('/Wishlist/GetCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.count > 0) {
+                            wishlistCountBadge.textContent = data.count;
+                            wishlistCountBadge.classList.remove('d-none');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching wishlist count:', error));
+
+                // Fetch cart count
+                fetch('/Cart/GetCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.count > 0) {
+                            cartCountBadge.textContent = data.count;
+                            cartCountBadge.classList.remove('d-none');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching cart count:', error));
+            });
+        </script>
+    }
 </body>
+
 </html>
+

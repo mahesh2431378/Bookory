@@ -43,5 +43,18 @@ namespace BookStoreMVC.Controllers
             TempData["Message"] = "Book removed from your wishlist.";
             return RedirectToAction(nameof(Index));
         }
+        [HttpGet]
+        public async Task<IActionResult> GetCount()
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return Json(new { count = 0 });
+            }
+
+            int userId = int.Parse(userIdClaim);
+            var count = await _wishlistService.GetWishlistCountAsync(userId);
+            return Json(new { count = count });
+        }
     }
 }

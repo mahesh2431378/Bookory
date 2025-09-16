@@ -29,34 +29,34 @@ else
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var i in Model)
-                {
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center gap-3">
-                                <img class="cart-thumb" src="@(string.IsNullOrWhiteSpace(i.Book?.ImageUrl) ? Url.Content("~/images/default-book.png") : i.Book!.ImageUrl)" alt="@i.Book?.Title" />
-                                <div>
-                                    <div class="fw-semibold">@i.Book.Title</div>
-                                    <small class="text-muted">@i.Book.Category?.Name</small>
+                    @foreach (var i in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img class="cart-thumb" src="@(string.IsNullOrWhiteSpace(i.Book?.ImageUrl) ? Url.Content("~/images/default-book.png") : i.Book!.ImageUrl)" alt="@i.Book?.Title" />
+                                    <div>
+                                        <div class="fw-semibold">@i.Book.Title</div>
+                                        <small class="text-muted">@i.Book.Category?.Name</small>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <div class="input-group input-group-sm qty-input mx-auto">
-                                <a class="btn btn-outline-secondary" asp-action="Update" asp-route-id="@i.Id" asp-route-qty="@(i.Quantity - 1)">-</a>
-                                <input class="form-control text-center" value="@i.Quantity" readonly />
-                                <a class="btn btn-outline-secondary" asp-action="Update" asp-route-id="@i.Id" asp-route-qty="@(i.Quantity + 1)">+</a>
-                            </div>
-                        </td>
-                        <td class="text-end">₹@($"{(i.Book?.Price ?? 0M):0.00}")</td>
-                        <td class="text-end">₹@($"{((i.Book?.Price ?? 0M) * i.Quantity):0.00}")</td>
-                        <td class="text-end">
-                            <a class="btn btn-outline-danger btn-sm btn-rounded" asp-action="Remove" asp-route-id="@i.Id">
-                                <i class="bi bi-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                }
+                            </td>
+                            <td class="text-center">
+                                <div class="input-group input-group-sm qty-input mx-auto">
+                                    <a class="btn btn-outline-secondary" asp-action="Update" asp-route-id="@i.Id" asp-route-qty="@(i.Quantity - 1)">-</a>
+                                    <input class="form-control text-center" value="@i.Quantity" readonly />
+                                    <a class="btn btn-outline-secondary" asp-action="Update" asp-route-id="@i.Id" asp-route-qty="@(i.Quantity + 1)">+</a>
+                                </div>
+                            </td>
+                            <td class="text-end">₹@($"{(i.Book?.Price ?? 0M):0.00}")</td>
+                            <td class="text-end">₹@($"{((i.Book?.Price ?? 0M) * i.Quantity):0.00}")</td>
+                            <td class="text-end">
+                                <a class="btn btn-outline-danger btn-sm btn-rounded" asp-action="Remove" asp-route-id="@i.Id">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

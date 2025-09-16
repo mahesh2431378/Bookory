@@ -7,6 +7,7 @@ namespace BookStoreMVC.Services
     /// </summary>
     public interface IWishlistService
     {
+        Task<int> GetWishlistCountAsync(int userId);
         Task<List<WishlistItem>> GetWishlistItemsAsync(int userId);
         Task AddToWishlistAsync(int userId, int bookId);
         Task RemoveFromWishlistAsync(int userId, int wishlistItemId);

@@ -15,6 +15,14 @@ namespace BookStoreMVC.Services
             _context = context;
         }
 
+        // --------------------- Added GetCartCount ----------------------
+        public async Task<int> GetCartCountAsync(int userId)
+        {
+            return await _context.CartItems
+                                 .Where(ci => ci.UserId == userId)
+                                 .CountAsync();
+        }
+
         public async Task<List<CartItem>> GetCartItemsAsync(int userId)
         {
             return await _context.CartItems

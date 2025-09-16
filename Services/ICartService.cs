@@ -12,5 +12,7 @@ namespace BookStoreMVC.Services
         Task UpdateQuantityAsync(int userId, int cartItemId, int qty);
         Task RemoveAsync(int userId, int cartItemId);
         Task ClearAsync(int userId);
+
+        Task<int> GetCartCountAsync(int userId);
     }
 }

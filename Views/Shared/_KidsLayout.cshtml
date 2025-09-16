@@ -1,7 +1,4 @@
-@using System.Security.Claims
-@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpCtx
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -11,11 +8,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/kids.css" rel="stylesheet" />
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+<style>
+    .kids-navlink .nav-item a:hover {
+        color: #FF96C0;
+        text-decoration: none;
+        transition: .2s all ease-in-out;
+    }
+
+    .kids-navlink .nav-item a {
+        color: #fff;
+        text-decoration: none;
+        padding-inline: 7px;
+        transition: 1s all ease-in-out;
+    }
+</style>
+<body class="kids-mode-theme">
+    <nav class="navbar navbar-expand-lg navbar-kids border-bottom">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
+            <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Kids">
                 <img src="~/images/logo-bookory.svg" alt="BOOKORY" height="28" class="me-2" />
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
@@ -23,36 +35,21 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div id="mainNav" class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    @if (User.Identity?.IsAuthenticated == true && User.IsInRole("ADMIN"))
-                    {
-                        // ADMIN NAVIGATION
-                        <li class="nav-item"><a asp-controller="Admin" asp-action="Dashboard" class="nav-link">Dashboard</a></li>
-                        <li class="nav-item"><a asp-controller="Books" asp-action="Index" class="nav-link">Manage Books</a></li>
-                        <li class="nav-item"><a asp-controller="Orders" asp-action="Index" class="nav-link">Manage Orders</a></li>
-                        <li class="nav-item"><a asp-controller="Admin" asp-action="Users" class="nav-link">Manage Customers</a></li>
-                    }
-                    else
-                    {
-                        // STANDARD USER & GUEST NAVIGATION
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Books" asp-action="Index">Shop</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="AboutUs">About </a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="ContactUs">Contact </a></li>
 
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item"><a class="nav-link" asp-controller="Orders" asp-action="Index">Orders</a></li>
-                        }
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 kids-navlink">
+                    <li class="nav-item"><a class="" asp-controller="Home" asp-action="Kids">Home</a></li>
+                    <li class="nav-item"><a class="" asp-controller="Books" asp-action="KidShop">Shop</a></li>
+                    <li class="nav-item"><a class="" asp-controller="Home" asp-action="AboutUs">About </a></li>
+                    <li class="nav-item"><a class="" asp-controller="Home" asp-action="ContactUs">Contact </a></li>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item"><a class="" asp-controller="Orders" asp-action="Index">Orders</a></li>
                     }
                 </ul>
-
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     @if (User?.Identity?.IsAuthenticated ?? false)
                     {
                         var uname = User?.FindFirst("Username")?.Value ?? User?.Identity?.Name ?? "Account";
-
-                        // Show wishlist and cart links for users who are NOT admins
                         if (!User.IsInRole("ADMIN"))
                         {
                             <li class="nav-item position-relative">
@@ -68,14 +65,13 @@
                                 </a>
                             </li>
                         }
-
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person-circle me-1"></i><span>@uname</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile"><i class="bi bi-person-circle pe-2"></i>Profile</a></li>
-                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-left pe-2"></i>Logout</a></li>
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Profile">Profile</a></li>
+                                <li><a class="dropdown-item" asp-controller="Account" asp-action="Logout">Logout</a></li>
                             </ul>
                         </li>
                     }
@@ -88,25 +84,19 @@
             </div>
         </div>
     </nav>
-    <nav class="navbar navbar-expand-lg border-bottom @(Context.Request.Path.Value != null && Context.Request.Path.Value.Contains("/Kids") ? "navbar-kids" : "bg-dark")" style="height: 2rem;">
+
+    <nav class="navbar navbar-expand-lg border-bottom navbar-kids" style="height: 2rem;">
         <div class="container">
             <ul class="navbar-nav w-100 justify-content-center">
                 <li class="nav-item me-4">
-                    <a class="nav-link @(Context.Request.Path.Value != null && Context.Request.Path.Value.Contains("/Kids") ? "" : "text-primary")"
-                       asp-controller="Home" asp-action="Index">
-                        Classic Reads
-                    </a>
+                    <a class=" nav-link-bookory" asp-controller="Home" asp-action="Index">Classic Reads</a>
                 </li>
                 <li class="nav-item ms-4">
-                    <a class="nav-link @(Context.Request.Path.Value != null && Context.Request.Path.Value.Contains("/Kids") ? "text-primary" : "")"
-                       asp-controller="Home" asp-action="Kids">
-                        Junior Readers
-                    </a>
+                    <a class="nav-link-bookory" asp-controller="Home" asp-action="Kids">Junior Readers</a>
                 </li>
             </ul>
         </div>
     </nav>
-
     <main class="container my-4 px-4">
         @RenderBody()
     </main>
@@ -114,6 +104,7 @@
     <footer class="footer-section bg-dark text-white pt-5 pb-4">
         <div class="container">
             <div class="row">
+
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                     <h5 class="text-uppercase mb-3">Bookory</h5>
                     <p class="text-white-50">
@@ -125,18 +116,18 @@
                     <h5 class="text-uppercase mb-3">Quick Links</h5>
                     <ul class="list-unstyled footer-links ">
                         <li><a asp-controller="Home" asp-action="Index" class="text-decoration-none text-white">Home</a></li>
-                        <li><a asp-controller="Books" asp-action="Index" class="text-decoration-none text-white">Shop</a></li>
-                        <li><a asp-controller="Home" asp-action="AboutUs" class="text-decoration-none text-white">About</a></li>
-                        <li><a asp-controller="Home" asp-action="ContactUs" class="text-decoration-none text-white">Contact</a></li>
+                        <li><a asp-controller="Books" asp-action="Index" class="text-decoration-none  text-white">Shop</a></li>
+                        <li><a asp-controller="Home" asp-action="AboutUs" class="text-decoration-none  text-white">About</a></li>
+                        <li><a asp-controller="Home" asp-action="ContactUs" class="text-decoration-none  text-white">Contact</a></li>
                     </ul>
                 </div>
 
                 <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase mb-3">Contact</h5>
+                    <h5 class="text-uppercase mb-3">Contact Us</h5>
                     <ul class="list-unstyled text-white-50">
                         <li class="d-flex align-items-start mb-2">
                             <i class="bi bi-geo-alt-fill me-2 pt-1"></i>
-                            <span>Velacherry 600028,Chennai,Tamil Nadu</span>
+                            <span>Velacherry,600028,Chennai,Tamil Nadu</span>
                         </li>
                         <li class="d-flex align-items-center mb-2">
                             <i class="bi bi-telephone-fill me-2"></i>
@@ -159,6 +150,7 @@
                         </div>
                     </form>
                 </div>
+
             </div>
 
             <div class="row mt-5">
@@ -167,6 +159,7 @@
                     <a href="#" class="social-icon mx-2"><i class="bi bi-twitter-x"></i></a>
                     <a href="#" class="social-icon mx-2"><i class="bi bi-instagram"></i></a>
                     <a href="#" class="social-icon mx-2"><i class="bi bi-linkedin"></i></a>
+
                 </div>
             </div>
 
@@ -181,34 +174,53 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
+    @if (User?.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const countBadge = document.getElementById('wishlist-count');
 
-    @if (User?.Identity?.IsAuthenticated == true && !User.IsInRole("ADMIN"))
+                // Fetch the count from your new API endpoint
+                fetch('/Wishlist/GetCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.count > 0) {
+                            countBadge.textContent = data.count;
+                            countBadge.classList.remove('d-none'); // Show the badge
+                        }
+                    })
+                    .catch(error => console.error('Error fetching wishlist count:', error));
+            });
+        </script>
+    }
+    @if (User?.Identity?.IsAuthenticated == true)
     {
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const wishlistCountBadge = document.getElementById('wishlist-count');
                 const cartCountBadge = document.getElementById('cart-count');
 
-                // Function to update a badge
-                function updateBadge(badgeElement, url) {
-                    if (badgeElement) {
-                        fetch(url)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.count > 0) {
-                                    badgeElement.textContent = data.count;
-                                    badgeElement.classList.remove('d-none');
-                                } else {
-                                    badgeElement.classList.add('d-none');
-                                }
-                            })
-                            .catch(error => console.error(`Error fetching count from ${url}:`, error));
-                    }
-                }
+                // Fetch wishlist count
+                fetch('/Wishlist/GetCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.count > 0) {
+                            wishlistCountBadge.textContent = data.count;
+                            wishlistCountBadge.classList.remove('d-none');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching wishlist count:', error));
 
-                // Fetch counts for wishlist and cart
-                updateBadge(wishlistCountBadge, '/Wishlist/GetCount');
-                updateBadge(cartCountBadge, '/Cart/GetCount');
+                // Fetch cart count
+                fetch('/Cart/GetCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.count > 0) {
+                            cartCountBadge.textContent = data.count;
+                            cartCountBadge.classList.remove('d-none');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching cart count:', error));
             });
         </script>
     }

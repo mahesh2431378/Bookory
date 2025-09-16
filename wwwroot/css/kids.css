@@ -1,0 +1,115 @@
+﻿/* ==== KIDS THEME ================================================== */
+/*
+* This stylesheet defines the specific overrides for the Kids section.
+* It changes the global variables to a new, playful palette.
+* The use of :root ensures these changes apply throughout the layout.
+*/
+
+:root {
+    /* Brand palette overrides for Kids section */
+    --brand: #FF96C0; /* Light Pink */
+    --accent: #ADD8E6; /* Light Blue */
+    --paper: #FDF5E6; /* Creamy White */
+    --ink: #5D5A64; /* Soft Grey */
+    /* Bootstrap overrides */
+    --bs-primary: var(--brand);
+    --bs-secondary: var(--accent);
+    --bs-body-bg: var(--paper);
+    --bs-body-color: var(--ink);
+    --bs-link-color: var(--brand);
+    --bs-link-hover-color: #ff69b4; /* Hot Pink */
+}
+
+/* Specific kids-mode body styles to ensure background changes correctly */
+
+.kids-mode-theme {
+    background-color: #FDF5E6;
+    color: var(--ink);
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* A playful font for the kids' theme */
+}
+
+
+.kids-navlink .nav-item:hover {
+    color: #FF96C0;
+}
+
+/* Navbar and footer overrides */
+.navbar-kids {
+    background-color: #ADD8E6;
+}
+
+    .navbar-kids .nav-link,
+    .navbar-kids .navbar-brand span {
+        color: #fff;
+    }
+
+        .navbar-kids .nav-link:hover {
+            color: #FF96C0;
+        }
+
+/* Hero section for the Kids' page */
+.kids-mode {
+    background-image: linear-gradient(45deg,#ADD8E6,#FF96C099),url('/images/Cartoon Kid.jpg');
+    background-size: cover;
+    padding: 4rem 0;
+    height: 55vh;
+    color: #fff;
+    position: relative;
+    border-radius: var(--radius);
+}
+
+    .kids-mode h1 {
+        font-size: 3rem;
+        font-weight: 700;
+    }
+
+/* Product card overrides for the Kids theme */
+.kids-mode-theme .product-card {
+    background-color: #fff;
+    border-color: rgba(0, 0, 0, .04);
+}
+
+/* Button overrides for the Kids theme */
+.kids-mode-theme .btn-primary {
+    background-color: #FF96C0;
+    border-color: #FF96C0;
+}
+
+    .kids-mode-theme .btn-primary:hover {
+        background-color: #ADD8E6;
+        border-color: #ADD8E6;
+    }
+
+
+.kids-mode-theme .btn-outline-secondary {
+    color: #FF96C0;
+    border-color: #FF96C0;
+}
+
+    .kids-mode-theme .btn-outline-secondary:hover {
+        color: white;
+        background-color: #ADD8E6;
+        border-color: #ADD8E6;
+    }
+
+.nav-link-bookory {
+    text-decoration: none;
+    color: white;
+    transition: 1s all ease-in-out;
+}
+
+    .nav-link-bookory:hover {
+        color: #FF96C0;
+        transition: .2s all ease-in-out;
+    }
+
+.kids-cart {
+    color: #FF96C0;
+    border-color: #FF96C0;
+}
+
+    .kids-cart:hover {
+        background-color: #ADD8E6;
+        border-color: #ADD8E6;
+        color: white;
+    }

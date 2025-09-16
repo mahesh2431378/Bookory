@@ -25,13 +25,21 @@ namespace BookStoreMVC.Controllers
         }
 
         // POST: /Wishlist/Add
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(int bookId)
+        public async Task<IActionResult> Add(int bookId, string returnUrl) // Add the returnUrl parameter
         {
             await _wishlistService.AddToWishlistAsync(CurrentUserId, bookId);
             TempData["Message"] = "Book added to your wishlist!";
-            return RedirectToAction("Index", "Books"); // Redirect back to the book list
+
+            // This is the important part: check for a valid return URL and redirect.
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            // Fallback to the default page if the returnUrl is not provided or invalid.
+            return RedirectToAction("Index", "Books");
         }
 
         // POST: /Wishlist/Remove/5

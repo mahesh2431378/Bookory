@@ -76,6 +76,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3NcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/2431378/OneDrive - Cognizant/Desktop/BOOKORY/Views/Books/kidShop.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va3Nca2lkU2hvcC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/2431378/OneDrive - Cognizant/Desktop/BOOKORY/Views/Cart/Checkout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxDaGVja291dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -108,6 +112,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/2431378/OneDrive - Cognizant/Desktop/BOOKORY/Views/Home/kids.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxraWRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/2431378/OneDrive - Cognizant/Desktop/BOOKORY/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -122,6 +130,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/2431378/OneDrive - Cognizant/Desktop/BOOKORY/Views/Shared/_AdminLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/2431378/OneDrive - Cognizant/Desktop/BOOKORY/Views/Shared/_KidsLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9LaWRzTGF5b3V0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/2431378/OneDrive - Cognizant/Desktop/BOOKORY/Views/Shared/_Layout.cshtml]

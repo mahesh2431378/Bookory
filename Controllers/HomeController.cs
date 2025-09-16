@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using BookStoreMVC.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookStoreMVC.Controllers
 {
@@ -15,8 +17,21 @@ namespace BookStoreMVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var books = await _context.Books.Include(b => b.Category).Take(8).ToListAsync();
-            return View(books);
+            var featuredBooks = await _context.Books.Include(b => b.Category)
+                                                    .Where(b => b.Category.Name != "Kids") // Exclude kids' books
+                                                    .Take(8)
+                                                    .ToListAsync();
+            return View(featuredBooks);
+        }
+
+        // Action for the new "Kids" home page
+        public async Task<IActionResult> Kids()
+        {
+            var kidsBooks = await _context.Books.Include(b => b.Category)
+                                                .Where(b => b.Category.Name == "Kids") // Show only kids' books
+                                                .Take(8)
+                                                .ToListAsync();
+            return View(kidsBooks);
         }
 
         public IActionResult Privacy()
@@ -24,19 +39,18 @@ namespace BookStoreMVC.Controllers
             return View();
         }
 
+        public IActionResult AboutUS()
+        {
+            return View();
+        }
+
+        public IActionResult ContactUS()
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
-        {
-            return View();
-        }
-
-        public IActionResult AboutUs()
-        {
-            return View();
-        }
-
-        public IActionResult ContactUs()
         {
             return View();
         }
